@@ -1,0 +1,18 @@
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Heavy ML data is external by workspace policy.
+weights/
+datasets/
+cache/
+temp/
+*.safetensors
+*.gguf
+
