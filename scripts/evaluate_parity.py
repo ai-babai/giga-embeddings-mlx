@@ -55,6 +55,45 @@ def ranking(left: np.ndarray, right: np.ndarray) -> tuple[float, int]:
     return float(np.mean(overlap)), int(np.sum(left_order[:, 0] != right_order[:, 0]))
 
 
+def hidden_metrics(
+    reference_chunks: list[np.ndarray],
+    candidate_chunks: list[np.ndarray],
+    attention_masks: list[np.ndarray],
+) -> dict[str, float]:
+    per_text_cosines = []
+    valid_reference = []
+    valid_candidate = []
+    for reference, candidate, attention_mask in zip(
+        reference_chunks, candidate_chunks, attention_masks, strict=True
+    ):
+        for row in range(len(reference)):
+            valid = attention_mask[row].astype(bool)
+            left = reference[row, valid].reshape(-1).astype(np.float64)
+            right = candidate[row, valid].reshape(-1).astype(np.float64)
+            denominator = max(np.linalg.norm(left) * np.linalg.norm(right), 1e-12)
+            per_text_cosines.append(float(np.dot(left, right) / denominator))
+            valid_reference.append(reference[row, valid].reshape(-1))
+            valid_candidate.append(candidate[row, valid].reshape(-1))
+    left = np.concatenate(valid_reference).astype(np.float64)
+    right = np.concatenate(valid_candidate).astype(np.float64)
+    denominator = max(np.linalg.norm(left) * np.linalg.norm(right), 1e-12)
+    return {
+        "min_per_text_flattened_cosine": float(min(per_text_cosines)),
+        "mean_per_text_flattened_cosine": float(np.mean(per_text_cosines)),
+        "global_valid_tokens_flattened_cosine": float(
+            np.dot(left, right) / denominator
+        ),
+        "max_abs_hidden_delta": float(
+            max(
+                np.max(np.abs(left_values - right_values))
+                for left_values, right_values in zip(
+                    valid_reference, valid_candidate, strict=True
+                )
+            )
+        ),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("model")
@@ -88,6 +127,17 @@ def main() -> None:
     reference = AutoModel.from_pretrained(
         args.model_path, trust_remote_code=True, dtype=torch_dtype
     ).to(device).eval()
+    layer_count = len(reference.layers)
+    selected_indices = sorted({0, layer_count // 2, layer_count - 1})
+    reference_hidden_chunks = {index: [] for index in selected_indices}
+    handles = []
+    for index in selected_indices:
+        def capture(_module, _inputs, output, *, layer_index=index):
+            reference_hidden_chunks[layer_index].append(
+                output.detach().float().cpu().numpy()
+            )
+
+        handles.append(reference.layers[index].register_forward_hook(capture))
     reference_chunks = []
     with torch.inference_mode():
         for encoded in encoded_batches:
@@ -97,9 +147,53 @@ def main() -> None:
             pooled = (hidden * mask).sum(1) / mask.sum(1).clamp(min=1e-6)
             reference_chunks.append(F.normalize(pooled, dim=-1).float().cpu().numpy())
             del encoded_device, hidden, pooled
+    for handle in handles:
+        handle.remove()
     reference_embeddings = np.concatenate(reference_chunks)
+    solo_encoded = tokenizer(
+        [TEXTS[0]],
+        padding=True,
+        truncation=True,
+        max_length=args.max_length,
+        return_tensors="pt",
+    )
+    with torch.inference_mode():
+        solo_device = {key: value.to(device) for key, value in solo_encoded.items()}
+        solo_hidden = reference(**solo_device).last_hidden_state
+        solo_mask = solo_device["attention_mask"].unsqueeze(-1).to(solo_hidden.dtype)
+        solo_pooled = (solo_hidden * solo_mask).sum(1) / solo_mask.sum(1).clamp(
+            min=1e-6
+        )
+        reference_solo = F.normalize(solo_pooled, dim=-1).float().cpu().numpy()
+        padded_encoded = tokenizer(
+            TEXTS,
+            padding=True,
+            truncation=True,
+            max_length=args.max_length,
+            return_tensors="pt",
+        )
+        padded_device = {
+            key: value.to(device) for key, value in padded_encoded.items()
+        }
+        padded_hidden = reference(**padded_device).last_hidden_state
+        padded_mask = padded_device["attention_mask"].unsqueeze(-1).to(
+            padded_hidden.dtype
+        )
+        padded_pooled = (padded_hidden * padded_mask).sum(1) / padded_mask.sum(
+            1
+        ).clamp(min=1e-6)
+        reference_padded = F.normalize(padded_pooled, dim=-1).float().cpu().numpy()
 
-    del reference, reference_chunks
+    del (
+        reference,
+        reference_chunks,
+        solo_device,
+        solo_hidden,
+        solo_pooled,
+        padded_device,
+        padded_hidden,
+        padded_pooled,
+    )
     gc.collect()
     if device.type == "mps":
         torch.mps.empty_cache()
@@ -108,19 +202,52 @@ def main() -> None:
     if args.dtype == "float32":
         mlx_model.model.set_dtype(mx.float32)
     mlx_chunks = []
+    mlx_hidden_chunks = {index: [] for index in selected_indices}
     for encoded in encoded_batches:
         input_ids = mx.array(encoded["input_ids"].numpy())
         attention_mask = mx.array(encoded["attention_mask"].numpy())
+        # Keep acceptance embeddings independent from diagnostic
+        # materialization. Hidden-state capture is a separate pass over the
+        # same inputs and cannot substitute its output for the measured path.
         values = pool_and_normalize(
             mlx_model.model(input_ids, attention_mask), attention_mask
         )
         mx.eval(values)
         mlx_chunks.append(np.array(values.astype(mx.float32), copy=True))
-        del values, input_ids, attention_mask
+        _diagnostic_final, selected_hidden = (
+            mlx_model.model.model.forward_with_selected_hidden_states(
+                input_ids, attention_mask, set(selected_indices)
+            )
+        )
+        mx.eval(*selected_hidden.values())
+        for index in selected_indices:
+            mlx_hidden_chunks[index].append(
+                np.array(selected_hidden[index].astype(mx.float32), copy=True)
+            )
+        del values, input_ids, attention_mask, _diagnostic_final, selected_hidden
         mx.clear_cache()
     mlx_embeddings = np.concatenate(mlx_chunks)
+    solo_input_ids = mx.array(solo_encoded["input_ids"].numpy())
+    solo_attention_mask = mx.array(solo_encoded["attention_mask"].numpy())
+    mlx_solo = pool_and_normalize(
+        mlx_model.model(solo_input_ids, solo_attention_mask), solo_attention_mask
+    )
+    mx.eval(mlx_solo)
+    mlx_solo = np.array(mlx_solo.astype(mx.float32), copy=True)
+    padded_input_ids = mx.array(padded_encoded["input_ids"].numpy())
+    padded_attention_mask = mx.array(padded_encoded["attention_mask"].numpy())
+    mlx_padded = pool_and_normalize(
+        mlx_model.model(padded_input_ids, padded_attention_mask),
+        padded_attention_mask,
+    )
+    mx.eval(mlx_padded)
+    mlx_padded = np.array(mlx_padded.astype(mx.float32), copy=True)
     reference_embeddings = normalize(reference_embeddings)
+    reference_solo = normalize(reference_solo)
+    reference_padded = normalize(reference_padded)
     mlx_embeddings = normalize(mlx_embeddings)
+    mlx_solo = normalize(mlx_solo)
+    mlx_padded = normalize(mlx_padded)
     row_cosines = np.sum(reference_embeddings * mlx_embeddings, axis=1)
     reference_scores = pairwise(reference_embeddings)
     mlx_scores = pairwise(mlx_embeddings)
@@ -149,6 +276,25 @@ def main() -> None:
         ),
         "mean_top10_overlap": top10_overlap,
         "top1_changes": top1_changes,
+        "padding_invariance": {
+            "reference_single_vs_padded_cosine": float(
+                np.sum(reference_solo[0] * reference_padded[0])
+            ),
+            "mlx_single_vs_padded_cosine": float(
+                np.sum(mlx_solo[0] * mlx_padded[0])
+            ),
+        },
+        "selected_hidden_state_parity": [
+            {
+                "layer_index": index,
+                **hidden_metrics(
+                    reference_hidden_chunks[index],
+                    mlx_hidden_chunks[index],
+                    [encoded["attention_mask"].numpy() for encoded in encoded_batches],
+                ),
+            }
+            for index in selected_indices
+        ],
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")

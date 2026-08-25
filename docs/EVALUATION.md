@@ -29,6 +29,13 @@ uv run python scripts/evaluate_parity.py 480m "$SOURCE_480M" \
 `float32` is a diagnostic graph-control lane. It must never be substituted for
 the pre-registered BF16 acceptance result.
 
+The parity report also captures the first, middle, and last block outputs on a
+separate diagnostic forward and compares single-text versus dynamically padded
+batch inference in both PyTorch and MLX. The acceptance embeddings always come
+from the normal runtime forward; diagnostic hidden states never replace that
+measured path. Use `--batch-size 1` when reproducing the memory-constrained 10B
+parity lane.
+
 ## Quant screening and frozen holdout
 
 ```bash

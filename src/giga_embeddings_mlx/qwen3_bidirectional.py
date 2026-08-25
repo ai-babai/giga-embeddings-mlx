@@ -28,6 +28,27 @@ class Qwen3BidirectionalModel(qwen3.Qwen3Model):
 
         return self.norm(hidden)
 
+    def forward_with_selected_hidden_states(
+        self,
+        inputs: mx.array,
+        attention_mask: mx.array | None,
+        layer_indices: set[int],
+    ) -> tuple[mx.array, dict[int, mx.array]]:
+        """Return the final hidden state and selected block outputs for parity QA."""
+
+        hidden = self.embed_tokens(inputs)
+        mask = (
+            attention_mask.astype(mx.bool_)[:, None, None, :]
+            if attention_mask is not None
+            else None
+        )
+        selected = {}
+        for index, layer in enumerate(self.layers):
+            hidden = layer(hidden, mask, cache=None)
+            if index in layer_indices:
+                selected[index] = hidden
+        return self.norm(hidden), selected
+
 
 class Model(nn.Module):
     """Checkpoint-compatible wrapper preserving the upstream ``model.*`` keys."""

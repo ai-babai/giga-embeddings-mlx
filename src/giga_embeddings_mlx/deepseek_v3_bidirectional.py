@@ -157,6 +157,33 @@ class DeepseekV3BidirectionalModel(deepseek_v3.DeepseekV3Model):
 
         return self.norm(hidden), router_indices
 
+    def forward_with_selected_hidden_states(
+        self,
+        inputs: mx.array,
+        attention_mask: mx.array | None,
+        layer_indices: set[int],
+    ) -> tuple[mx.array, dict[int, mx.array]]:
+        """Return selected block outputs without retaining every layer."""
+
+        hidden = self.embed_tokens(inputs)
+        mask = (
+            attention_mask.astype(mx.bool_)[:, None, None, :]
+            if attention_mask is not None
+            else None
+        )
+        selected = {}
+        for index, layer in enumerate(self.layers):
+            attention_out = self._reference_attention(
+                layer.self_attn, layer.input_layernorm(hidden), mask
+            )
+            residual = hidden + attention_out
+            hidden = residual + layer.mlp(
+                layer.post_attention_layernorm(residual)
+            )
+            if index in layer_indices:
+                selected[index] = hidden
+        return self.norm(hidden), selected
+
 
 class Model(deepseek_v3.Model):
     """Checkpoint-compatible encoder wrapper reusing MLX-LM sanitization."""
