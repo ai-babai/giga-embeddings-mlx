@@ -4,6 +4,7 @@ import argparse
 import gc
 import hashlib
 import json
+import time
 from pathlib import Path
 
 import numpy as np
@@ -33,6 +34,9 @@ def encode_reference(
     max_length: int,
 ) -> np.ndarray:
     chunks = []
+    total_batches = (len(texts) + batch_size - 1) // batch_size
+    progress_interval = max(total_batches // 20, 1)
+    started_at = time.monotonic()
     with torch.inference_mode():
         for start in range(0, len(texts), batch_size):
             encoded = tokenizer(
@@ -48,6 +52,21 @@ def encode_reference(
             pooled = (hidden * mask).sum(1) / mask.sum(1).clamp(min=1e-6)
             chunks.append(F.normalize(pooled, dim=-1).float().cpu().numpy())
             del encoded, hidden, mask, pooled
+            completed_batches = start // batch_size + 1
+            if (
+                completed_batches % progress_interval == 0
+                or completed_batches == total_batches
+            ):
+                elapsed = time.monotonic() - started_at
+                rate = completed_batches / elapsed
+                remaining = (total_batches - completed_batches) / rate
+                print(
+                    "[backend-holdout] "
+                    f"{completed_batches}/{total_batches} batches "
+                    f"({completed_batches / total_batches:.0%}), "
+                    f"elapsed={elapsed:.1f}s, eta={remaining:.1f}s",
+                    flush=True,
+                )
     return np.concatenate(chunks)
 
 
