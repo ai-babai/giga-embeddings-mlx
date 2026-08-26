@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import gc
+import hashlib
 import json
 from pathlib import Path
 
@@ -29,6 +30,30 @@ TEXTS = [
     "SELECT customer_id, SUM(total) FROM orders GROUP BY customer_id;",
     "Чуть более длинный текст нужен для проверки паддинга в батче. " * 16,
 ]
+
+
+def load_corpus(path: Path | None) -> tuple[list[str], list[dict], list[str], str | None]:
+    if path is None:
+        records = [
+            {"id": f"builtin-{index:02d}", "text": text}
+            for index, text in enumerate(TEXTS)
+        ]
+        return TEXTS, records, TEXTS[:3], None
+
+    raw = path.read_bytes()
+    payload = json.loads(raw)
+    records = payload.get("records")
+    if not isinstance(records, list) or len(records) < 11:
+        raise ValueError("Parity corpus must contain at least 11 records for top-10")
+    if any(not isinstance(record.get("text"), str) for record in records):
+        raise ValueError("Every parity record must contain string field 'text'")
+    by_id = {record.get("id"): record for record in records}
+    padding_ids = payload.get("padding_control_ids", [])
+    if not padding_ids or any(record_id not in by_id for record_id in padding_ids):
+        raise ValueError("Parity corpus has invalid padding_control_ids")
+    texts = [record["text"] for record in records]
+    padding_texts = [by_id[record_id]["text"] for record_id in padding_ids]
+    return texts, records, padding_texts, hashlib.sha256(raw).hexdigest()
 
 
 def normalize(values: np.ndarray) -> np.ndarray:
@@ -100,23 +125,45 @@ def main() -> None:
     parser.add_argument("model_path", type=Path)
     parser.add_argument("revision")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--corpus", type=Path)
     parser.add_argument("--dtype", choices=("bfloat16", "float32"), default="bfloat16")
     parser.add_argument("--device", choices=("auto", "cpu", "mps"), default="auto")
     parser.add_argument("--max-length", type=int, default=512)
     parser.add_argument("--batch-size", type=int, default=12)
     args = parser.parse_args()
 
+    texts, records, padding_texts, corpus_sha256 = load_corpus(args.corpus)
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
     encoded_batches = [
         tokenizer(
-            TEXTS[start : start + args.batch_size],
+            texts[start : start + args.batch_size],
             padding=True,
             truncation=True,
             max_length=args.max_length,
             return_tensors="pt",
         )
-        for start in range(0, len(TEXTS), args.batch_size)
+        for start in range(0, len(texts), args.batch_size)
     ]
+    token_lengths = [
+        int(length)
+        for encoded in encoded_batches
+        for length in encoded["attention_mask"].sum(axis=1).tolist()
+    ]
+    expected_lengths = [record.get("expected_tokens") for record in records]
+    if any(expected is not None for expected in expected_lengths):
+        mismatches = [
+            {
+                "id": record.get("id"),
+                "expected": expected,
+                "actual": actual,
+            }
+            for record, expected, actual in zip(
+                records, expected_lengths, token_lengths, strict=True
+            )
+            if expected is not None and expected != actual
+        ]
+        if mismatches:
+            raise ValueError(f"Parity corpus token-length mismatch: {mismatches}")
     device_name = (
         "mps"
         if args.device == "auto" and torch.backends.mps.is_available()
@@ -151,7 +198,7 @@ def main() -> None:
         handle.remove()
     reference_embeddings = np.concatenate(reference_chunks)
     solo_encoded = tokenizer(
-        [TEXTS[0]],
+        [padding_texts[0]],
         padding=True,
         truncation=True,
         max_length=args.max_length,
@@ -166,7 +213,7 @@ def main() -> None:
         )
         reference_solo = F.normalize(solo_pooled, dim=-1).float().cpu().numpy()
         padded_encoded = tokenizer(
-            TEXTS,
+            padding_texts,
             padding=True,
             truncation=True,
             max_length=args.max_length,
@@ -257,7 +304,11 @@ def main() -> None:
         "source_revision": args.revision,
         "reference_device": str(device),
         "dtype": args.dtype,
-        "texts": len(TEXTS),
+        "texts": len(texts),
+        "corpus": str(args.corpus.resolve()) if args.corpus else "builtin",
+        "corpus_sha256": corpus_sha256,
+        "record_ids": [record.get("id") for record in records],
+        "token_lengths": token_lengths,
         "batch_size": args.batch_size,
         "max_tokens_in_batch": max(
             int(encoded["attention_mask"].sum(axis=1).max())
