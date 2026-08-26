@@ -113,6 +113,9 @@ def main() -> None:
     args = parser.parse_args()
 
     tokenizer = Qwen2Tokenizer.from_pretrained(args.tokenizer_path)
+    special_tokens_per_record = len(
+        tokenizer.encode("", add_special_tokens=True)
+    ) - len(tokenizer.encode("", add_special_tokens=False))
     records = []
     for record_id, family, target, seed in LENGTH_SPECS:
         text = exact_length_text(tokenizer, seed, target)
@@ -120,7 +123,8 @@ def main() -> None:
             {
                 "id": record_id,
                 "family": family,
-                "expected_tokens": target,
+                "expected_content_tokens": target,
+                "expected_model_tokens": target + special_tokens_per_record,
                 "length_control": True,
                 "text": text,
             }
@@ -130,8 +134,11 @@ def main() -> None:
             {
                 "id": record_id,
                 "family": family,
-                "expected_tokens": len(
+                "expected_content_tokens": len(
                     tokenizer.encode(text, add_special_tokens=False)
+                ),
+                "expected_model_tokens": len(
+                    tokenizer.encode(text, add_special_tokens=True)
                 ),
                 "length_control": False,
                 "text": text,
@@ -142,7 +149,8 @@ def main() -> None:
         "schema_version": 1,
         "corpus_id": "giga-embeddings-0826-parity-v2",
         "source_tokenizer_revision": args.source_revision,
-        "required_token_lengths": [spec[2] for spec in LENGTH_SPECS],
+        "required_content_token_lengths": [spec[2] for spec in LENGTH_SPECS],
+        "special_tokens_per_record": special_tokens_per_record,
         "padding_control_ids": [spec[0] for spec in LENGTH_SPECS[:3]],
         "records": records,
     }
@@ -162,7 +170,10 @@ def main() -> None:
         "source_tokenizer_revision": args.source_revision,
         "sha256": digest,
         "records": len(records),
-        "required_token_lengths": payload["required_token_lengths"],
+        "required_content_token_lengths": payload[
+            "required_content_token_lengths"
+        ],
+        "special_tokens_per_record": special_tokens_per_record,
         "family_counts": family_counts,
         "padding_control_ids": payload["padding_control_ids"],
         "license": "synthetic-evaluation-text",

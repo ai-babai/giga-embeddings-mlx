@@ -144,23 +144,37 @@ def main() -> None:
         )
         for start in range(0, len(texts), args.batch_size)
     ]
-    token_lengths = [
+    model_token_lengths = [
         int(length)
         for encoded in encoded_batches
         for length in encoded["attention_mask"].sum(axis=1).tolist()
     ]
-    expected_lengths = [record.get("expected_tokens") for record in records]
-    if any(expected is not None for expected in expected_lengths):
+    content_token_lengths = [
+        len(tokenizer.encode(text, add_special_tokens=False)) for text in texts
+    ]
+    expected_content_lengths = [
+        record.get("expected_content_tokens") for record in records
+    ]
+    expected_model_lengths = [record.get("expected_model_tokens") for record in records]
+    if any(expected is not None for expected in expected_content_lengths):
         mismatches = [
             {
                 "id": record.get("id"),
-                "expected": expected,
-                "actual": actual,
+                "expected_content_tokens": expected_content,
+                "actual_content_tokens": actual_content,
+                "expected_model_tokens": expected_model,
+                "actual_model_tokens": actual_model,
             }
-            for record, expected, actual in zip(
-                records, expected_lengths, token_lengths, strict=True
+            for record, expected_content, actual_content, expected_model, actual_model in zip(
+                records,
+                expected_content_lengths,
+                content_token_lengths,
+                expected_model_lengths,
+                model_token_lengths,
+                strict=True,
             )
-            if expected is not None and expected != actual
+            if (expected_content is not None and expected_content != actual_content)
+            or (expected_model is not None and expected_model != actual_model)
         ]
         if mismatches:
             raise ValueError(f"Parity corpus token-length mismatch: {mismatches}")
@@ -308,7 +322,8 @@ def main() -> None:
         "corpus": str(args.corpus.resolve()) if args.corpus else "builtin",
         "corpus_sha256": corpus_sha256,
         "record_ids": [record.get("id") for record in records],
-        "token_lengths": token_lengths,
+        "content_token_lengths": content_token_lengths,
+        "model_token_lengths": model_token_lengths,
         "batch_size": args.batch_size,
         "max_tokens_in_batch": max(
             int(encoded["attention_mask"].sum(axis=1).max())
