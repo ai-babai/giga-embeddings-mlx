@@ -10,6 +10,7 @@ import mlx.core as mx
 import numpy as np
 import torch
 import torch.nn.functional as F
+from mlx import nn
 from scipy.stats import spearmanr
 from transformers import AutoModel, AutoTokenizer
 
@@ -32,7 +33,44 @@ TEXTS = [
 ]
 
 
-def load_corpus(path: Path | None) -> tuple[list[str], list[dict], list[str], str | None]:
+class UpstreamOrderRMSNorm(nn.Module):
+    """Diagnostic RMSNorm matching the Qwen3 PyTorch BF16 cast boundary."""
+
+    def __init__(self, weight: mx.array, eps: float):
+        super().__init__()
+        self.weight = weight
+        self.eps = eps
+
+    def __call__(self, values: mx.array) -> mx.array:
+        input_dtype = values.dtype
+        normalized = values.astype(mx.float32)
+        variance = mx.mean(mx.square(normalized), axis=-1, keepdims=True)
+        normalized = normalized * mx.rsqrt(variance + self.eps)
+        return self.weight * normalized.astype(input_dtype)
+
+
+def use_upstream_order_qwen_rmsnorm(model) -> None:
+    qwen = model.model
+
+    def replace(module, attribute: str) -> None:
+        current = getattr(module, attribute)
+        setattr(
+            module,
+            attribute,
+            UpstreamOrderRMSNorm(current.weight, current.eps),
+        )
+
+    replace(qwen, "norm")
+    for layer in qwen.layers:
+        replace(layer, "input_layernorm")
+        replace(layer, "post_attention_layernorm")
+        replace(layer.self_attn, "q_norm")
+        replace(layer.self_attn, "k_norm")
+
+
+def load_corpus(
+    path: Path | None,
+) -> tuple[list[str], list[dict], list[str], str | None]:
     if path is None:
         records = [
             {"id": f"builtin-{index:02d}", "text": text}
@@ -135,6 +173,7 @@ def main() -> None:
     parser.add_argument("--device", choices=("auto", "cpu", "mps"), default="auto")
     parser.add_argument("--max-length", type=int, default=512)
     parser.add_argument("--batch-size", type=int, default=12)
+    parser.add_argument("--upstream-order-qwen-rmsnorm", action="store_true")
     args = parser.parse_args()
 
     texts, records, padding_texts, corpus_sha256 = load_corpus(args.corpus)
@@ -180,18 +219,25 @@ def main() -> None:
     device_name = (
         "mps"
         if args.device == "auto" and torch.backends.mps.is_available()
-        else "cpu" if args.device == "auto" else args.device
+        else "cpu"
+        if args.device == "auto"
+        else args.device
     )
     device = torch.device(device_name)
     torch_dtype = torch.float32 if args.dtype == "float32" else torch.bfloat16
-    reference = AutoModel.from_pretrained(
-        args.model_path, trust_remote_code=True, dtype=torch_dtype
-    ).to(device).eval()
+    reference = (
+        AutoModel.from_pretrained(
+            args.model_path, trust_remote_code=True, dtype=torch_dtype
+        )
+        .to(device)
+        .eval()
+    )
     layer_count = len(reference.layers)
     selected_indices = sorted({0, layer_count // 2, layer_count - 1})
     reference_hidden_chunks = {index: [] for index in selected_indices}
     handles = []
     for index in selected_indices:
+
         def capture(_module, _inputs, output, *, layer_index=index):
             reference_hidden_chunks[layer_index].append(
                 output.detach().float().cpu().numpy()
@@ -232,16 +278,14 @@ def main() -> None:
             max_length=args.max_length,
             return_tensors="pt",
         )
-        padded_device = {
-            key: value.to(device) for key, value in padded_encoded.items()
-        }
+        padded_device = {key: value.to(device) for key, value in padded_encoded.items()}
         padded_hidden = reference(**padded_device).last_hidden_state
-        padded_mask = padded_device["attention_mask"].unsqueeze(-1).to(
-            padded_hidden.dtype
+        padded_mask = (
+            padded_device["attention_mask"].unsqueeze(-1).to(padded_hidden.dtype)
         )
-        padded_pooled = (padded_hidden * padded_mask).sum(1) / padded_mask.sum(
-            1
-        ).clamp(min=1e-6)
+        padded_pooled = (padded_hidden * padded_mask).sum(1) / padded_mask.sum(1).clamp(
+            min=1e-6
+        )
         reference_padded = F.normalize(padded_pooled, dim=-1).float().cpu().numpy()
 
     del (
@@ -259,6 +303,10 @@ def main() -> None:
         torch.mps.empty_cache()
 
     mlx_model = load_embedding_model(args.model_path)
+    if args.upstream_order_qwen_rmsnorm:
+        if mlx_model.config.get("model_type") != "qwen3_bidirec":
+            raise ValueError("RMSNorm control applies only to Qwen3 profiles")
+        use_upstream_order_qwen_rmsnorm(mlx_model.model)
     if args.dtype == "float32":
         mlx_model.model.set_dtype(mx.float32)
     mlx_chunks = []
@@ -317,6 +365,7 @@ def main() -> None:
         "source_revision": args.revision,
         "reference_device": str(device),
         "dtype": args.dtype,
+        "upstream_order_qwen_rmsnorm": args.upstream_order_qwen_rmsnorm,
         "texts": len(texts),
         "corpus": str(args.corpus.resolve()) if args.corpus else "builtin",
         "corpus_sha256": corpus_sha256,
@@ -346,18 +395,14 @@ def main() -> None:
         "similarity_rmse": float(
             np.sqrt(np.mean((reference_scores - mlx_scores) ** 2))
         ),
-        "similarity_spearman": float(
-            spearmanr(reference_scores, mlx_scores).statistic
-        ),
+        "similarity_spearman": float(spearmanr(reference_scores, mlx_scores).statistic),
         "mean_top10_overlap": top10_overlap,
         "top1_changes": top1_changes,
         "padding_invariance": {
             "reference_single_vs_padded_cosine": float(
                 np.sum(reference_solo[0] * reference_padded[0])
             ),
-            "mlx_single_vs_padded_cosine": float(
-                np.sum(mlx_solo[0] * mlx_padded[0])
-            ),
+            "mlx_single_vs_padded_cosine": float(np.sum(mlx_solo[0] * mlx_padded[0])),
         },
         "selected_hidden_state_parity": [
             {
