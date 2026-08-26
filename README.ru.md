@@ -82,8 +82,9 @@ giga-embeddings-mlx encode "Где находится Москва?" \
 [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64).
 
 BF16-алиасы указывают на неизменяемые upstream-коммиты; веса не дублируются в
-`ai-babai`. Q8-алиасы указывают на неизменяемый release tag `0826-v0.1.0` в
-отдельных repositories.
+`ai-babai`. Q8-алиасы также указывают прямо на точные проверенные Hugging Face
+коммиты этого выпуска. Человекочитаемые теги `0826-v0.1.0` обозначают те же
+артефакты, но не требуются runtime для разрешения модели.
 
 10B Q8 не является default-вариантом и не позиционируется как near-lossless:
 aggregate retrieval gate пройден, но измеренная разница NDCG@10 для code-family

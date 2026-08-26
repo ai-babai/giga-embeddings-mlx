@@ -14,6 +14,11 @@ def test_release_catalog_contains_six_profiles_and_balanced_default() -> None:
     assert DEFAULT_PROFILE == "3b-q8"
     assert get_model_profile("default") is MODEL_PROFILES["3b-q8"]
     assert MODEL_PROFILES["3b-q8"].release_role == "balanced-default"
+    assert all(
+        len(profile.revision) == 40
+        and all(character in "0123456789abcdef" for character in profile.revision)
+        for profile in MODEL_PROFILES.values()
+    )
 
 
 @pytest.mark.parametrize(

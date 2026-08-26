@@ -12,7 +12,8 @@ and releases use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Full-sequence bidirectional Qwen3 and DeepSeek-V3 MoE execution without
   running checkpoint Python during normal inference.
 - Three immutable upstream BF16 profiles and three accepted Q8 profiles, with
-  `3b-q8` as the disclosed balanced default.
+  `3b-q8` as the disclosed balanced default; every profile resolves by an
+  exact verified Hugging Face commit SHA.
 - Explicit query/document APIs, CLI encoding, local OpenAI-compatible
   `/v1/embeddings`, offline/cache support, and conservative memory preflight.
 - Reproducible public benchmark JSON and tables for quality, artifact size,

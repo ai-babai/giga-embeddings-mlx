@@ -83,8 +83,9 @@ and
 [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64).
 
 The BF16 aliases point to immutable upstream commits; weights are not
-duplicated under `ai-babai`. Q8 aliases point to the immutable `0826-v0.1.0`
-release tag in their dedicated repositories.
+duplicated under `ai-babai`. Q8 aliases also point directly to the exact
+verified Hugging Face commits for this release. Human-facing `0826-v0.1.0`
+tags identify the same artifacts but are not required for runtime resolution.
 
 The 10B Q8 artifact is not the default and is not described as near-lossless:
 its aggregate retrieval gate passed, but the measured code-family NDCG@10

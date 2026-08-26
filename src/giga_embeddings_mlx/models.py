@@ -30,7 +30,7 @@ MODEL_PROFILES: dict[str, ModelProfile] = {
     "480m-q8": ModelProfile(
         name="480m-q8",
         repo_id="ai-babai/giga-embeddings-0826-480m-mlx-q8-g64",
-        revision="0826-v0.1.0",
+        revision="cdf24f725e718b909449d3aae3dff61b677b0283",
         architecture="qwen3_bidirectional",
         model_type="qwen3_bidirec",
         embedding_dimension=1024,
@@ -50,7 +50,7 @@ MODEL_PROFILES: dict[str, ModelProfile] = {
     "3b-q8": ModelProfile(
         name="3b-q8",
         repo_id="ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64",
-        revision="0826-v0.1.0",
+        revision="829506daf10dff1abe75bd8412e3ad2ab1856123",
         architecture="qwen3_bidirectional",
         model_type="qwen3_bidirec",
         embedding_dimension=2048,
@@ -70,7 +70,7 @@ MODEL_PROFILES: dict[str, ModelProfile] = {
     "10b-a1.8b-q8": ModelProfile(
         name="10b-a1.8b-q8",
         repo_id="ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64",
-        revision="0826-v0.1.0",
+        revision="ce54ed6b20eb73d4aeefc5820f4a3463004d45c4",
         architecture="deepseek_v3_bidirectional",
         model_type="deepseek_v3_bidirec",
         embedding_dimension=1536,
