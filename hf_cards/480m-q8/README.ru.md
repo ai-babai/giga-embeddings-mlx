@@ -19,6 +19,8 @@ inference: false
 
 [English card](README.md)
 
+[Коллекция Giga Embeddings 0826 MLX](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244)
+
 Компактная native-MLX квантизация
 [`ai-sage/Giga-Embeddings-instruct-480M-0826`](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826)
 для Apple Silicon. Это независимый артефакт `ai-babai`, а не официальный

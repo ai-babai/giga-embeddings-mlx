@@ -19,6 +19,8 @@ inference: false
 
 [English card](README.md)
 
+[Коллекция Giga Embeddings 0826 MLX](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244)
+
 Сбалансированная native-MLX квантизация
 [`ai-sage/Giga-Embeddings-instruct-3B-0826`](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-3B-0826)
 для Apple Silicon. Embedding и финальные edge layers сохранены в BF16, eligible

@@ -21,6 +21,8 @@ inference: false
 
 [English card](README.md)
 
+[Коллекция Giga Embeddings 0826 MLX](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244)
+
 > **Compact/research артефакт с предупреждением по code retrieval.** Aggregate
 > retrieval прошёл, но code-family NDCG@10 изменился на `−0,01297` относительно
 > native MLX BF16. Это не default и не near-lossless claim.

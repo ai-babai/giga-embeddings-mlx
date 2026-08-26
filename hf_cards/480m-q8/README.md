@@ -19,6 +19,8 @@ inference: false
 
 [Русская карточка](README.ru.md)
 
+[Giga Embeddings 0826 MLX Collection](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244)
+
 Compact native-MLX quantization of
 [`ai-sage/Giga-Embeddings-instruct-480M-0826`](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826)
 for Apple Silicon. This is an independent `ai-babai` artifact, not an official
