@@ -26,12 +26,12 @@ inference: false
 # Giga Embeddings 0826 480M — MLX Q8 for Apple Silicon
 
 [Русская карточка](README.ru.md) ·
-[All MLX models](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
+[All MLX models](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-for-apple-silicon-mlx-q8-6a8eec40b26f6543f5da3244) ·
 [GitHub](https://github.com/ai-babai/giga-embeddings-mlx) ·
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Original paper](https://arxiv.org/abs/2608.23806)
 
-![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.1)
+![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
 
 The compact choice for local Russian and English semantic search, RAG, text
 similarity, clustering, and classification on Apple Silicon. It is the smallest
@@ -55,9 +55,9 @@ port and quantization preserve retrieval behavior.
 
 | Model | Best for | Download | Original Russian MTEB | Our Q8 retrieval check |
 |---|---|---:|---:|---:|
-| [3B Q8 + BF16 edges](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64) | recommended default | 3.755 GB | 74.56 | NDCG@10 Δ +0.00181 |
-| **[480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64)** | **smallest and fastest** | **0.525 GB** | **70.98** | **NDCG@10 Δ +0.00289** |
-| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64) | research; code warning | 11.144 GB | 74.98 | aggregate Δ −0.00046 |
+| [3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8) | recommended default | 3.755 GB | 74.56 | NDCG@10 Δ +0.00181 |
+| **[480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8)** | **smallest and fastest** | **0.525 GB** | **70.98** | **NDCG@10 Δ +0.00289** |
+| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8) | research; code warning | 11.144 GB | 74.98 | aggregate Δ −0.00046 |
 
 ## Use
 
@@ -99,7 +99,7 @@ hardware details, and evidence hashes are in the
 - Original model: [`ai-sage/Giga-Embeddings-instruct-480M-0826`](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826).
 - Original paper: [arXiv:2608.23806](https://arxiv.org/abs/2608.23806).
 - Base revision: `2d0c1a92716eef0e5b6972df85b5883eb5b4f57a`.
-- Weight release: `0826-v0.1.0`; tensor bytes are unchanged in the `0.1.1`
+- Weight release: `0826-v0.1.0`; tensor bytes are unchanged in the `0.1.2`
   documentation update.
 - Converter commit: `dfbc6a375ccdb637d1932529acbcfbf4db5025b6`.
 - `manifest.json` records the portable inventory and SHA-256 hashes.

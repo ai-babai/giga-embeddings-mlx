@@ -21,7 +21,7 @@
     <rect width="720" height="735" rx="28" fill="#162131" stroke="#58a6ff" stroke-width="4"/>
     <rect x="28" y="28" width="260" height="54" rx="27" fill="#1f6feb"/>
     <text x="158" y="65" font-size="29" font-weight="700" text-anchor="middle">★ RECOMMENDED</text>
-    <text x="36" y="148" class="card-title">3B Q8 + BF16 edges</text>
+    <text x="36" y="148" class="card-title">3B MLX Q8</text>
     <text x="36" y="197" font-size="31" class="blue">Best balance for most applications</text>
 
     <text x="36" y="276" class="label">Russian quality score</text>

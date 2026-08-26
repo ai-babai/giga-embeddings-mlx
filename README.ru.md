@@ -9,12 +9,12 @@
 инференса не нужны PyTorch, облачный API и Python-код из репозиториев моделей.
 
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
-[MLX-модели](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
+[MLX-модели](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-for-apple-silicon-mlx-q8-6a8eec40b26f6543f5da3244) ·
 [Оригинальная статья](https://arxiv.org/abs/2608.23806) ·
 [Полный MLX-бенчмарк](docs/benchmarks/0826-results.md) ·
 [Последний релиз](https://github.com/ai-babai/giga-embeddings-mlx/releases/latest)
 
-![Какую модель Giga Embeddings 0826 MLX выбрать для Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.1)
+![Какую модель Giga Embeddings 0826 MLX выбрать для Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
 
 ## Зачем нужен этот MLX-порт?
 
@@ -68,9 +68,9 @@ Hugging Face, затем используется локальный кеш.
 
 | MLX-модель | Для чего подходит | Русский MTEB исходной модели¹ | Наша проверка Q8² | Размер загрузки | Пиковая память³ |
 |---|---|---:|---:|---:|---:|
-| **[3B Q8 + BF16 edges](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64)** | **рекомендуемая по умолчанию** | **74,56** | **NDCG@10 Δ +0,00181** | **3,755 GB** | **5,137 GB** |
-| [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64) | самая компактная и быстрая | 70,98 | NDCG@10 Δ +0,00289 | 0,525 GB | 1,339 GB |
-| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64) | исследовательские задачи с большим запасом качества | 74,98 | совокупная Δ −0,00046 | 11,144 GB | 14,423 GB |
+| **[3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8)** | **рекомендуемая по умолчанию** | **74,56** | **NDCG@10 Δ +0,00181** | **3,755 GB** | **5,137 GB** |
+| [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8) | самая компактная и быстрая | 70,98 | NDCG@10 Δ +0,00289 | 0,525 GB | 1,339 GB |
+| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8) | исследовательские задачи с большим запасом качества | 74,98 | совокупная Δ −0,00046 | 11,144 GB | 14,423 GB |
 
 1. Task-macro MTEB из
    [статьи Giga-Embeddings](https://arxiv.org/html/2608.23806#S4). Это результат

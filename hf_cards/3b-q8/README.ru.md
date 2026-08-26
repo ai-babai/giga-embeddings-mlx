@@ -26,12 +26,12 @@ inference: false
 # Giga Embeddings 0826 3B — рекомендуемая MLX Q8 для Apple Silicon
 
 [English card](README.md) ·
-[Все MLX-модели](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
+[Все MLX-модели](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-for-apple-silicon-mlx-q8-6a8eec40b26f6543f5da3244) ·
 [GitHub](https://github.com/ai-babai/giga-embeddings-mlx) ·
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Оригинальная статья](https://arxiv.org/abs/2608.23806)
 
-![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.1)
+![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
 
 Рекомендуемая модель по умолчанию для локального семантического поиска, RAG,
 сравнения текстов, кластеризации и классификации на русском и английском языках.
@@ -56,9 +56,9 @@ MTEB на Q8: наша отдельная проверка измеряет со
 
 | Модель | Для чего подходит | Размер | Русский MTEB исходной модели | Наша проверка Q8 |
 |---|---|---:|---:|---:|
-| **[3B Q8 + BF16 edges](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64)** | **рекомендуемая по умолчанию** | **3,755 GB** | **74,56** | **NDCG@10 Δ +0,00181** |
-| [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64) | самая компактная и быстрая | 0,525 GB | 70,98 | NDCG@10 Δ +0,00289 |
-| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64) | research; предупреждение по коду | 11,144 GB | 74,98 | совокупная Δ −0,00046 |
+| **[3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8)** | **рекомендуемая по умолчанию** | **3,755 GB** | **74,56** | **NDCG@10 Δ +0,00181** |
+| [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8) | самая компактная и быстрая | 0,525 GB | 70,98 | NDCG@10 Δ +0,00289 |
+| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8) | research; предупреждение по коду | 11,144 GB | 74,98 | совокупная Δ −0,00046 |
 
 ## Использование
 
@@ -104,7 +104,7 @@ Q8 уменьшила место на диске и пиковую Metal-пам�
 - Оригинальная статья: [arXiv:2608.23806](https://arxiv.org/abs/2608.23806).
 - Base revision: `ed7db5c91b900b39381b27b6e9c0a3d31137cd29`.
 - Релиз весов: `0826-v0.1.0`; tensor bytes не менялись в документационном
-  обновлении `0.1.1`.
+  обновлении `0.1.2`.
 - Converter commit: `dfbc6a375ccdb637d1932529acbcfbf4db5025b6`.
 - `manifest.json` содержит portable inventory и SHA-256.
 
