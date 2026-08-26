@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this MLX port, cite this software and the exact upstream Giga Embeddings model repository."
+title: "Giga Embeddings MLX"
+type: software
+authors:
+  - family-names: Popkov
+    given-names: Maksim
+version: 0.1.0
+date-released: 2026-08-26
+license: MIT
+repository-code: "https://github.com/ai-babai/giga-embeddings-mlx"
+url: "https://huggingface.co/ai-babai"
+keywords:
+  - text embeddings
+  - Apple Silicon
+  - Giga Embeddings
+  - MLX
+  - quantization
+references:
+  - type: generic
+    title: "Giga-Embeddings-instruct-480M-0826"
+    url: "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826"
+  - type: generic
+    title: "Giga-Embeddings-instruct-3B-0826"
+    url: "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-3B-0826"
+  - type: generic
+    title: "Giga-Embeddings-instruct-10B-A1.8B-0826"
+    url: "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826"

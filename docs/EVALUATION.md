@@ -1,8 +1,8 @@
 # Evaluation and benchmarking
 
-The scripts in `scripts/` are the reproducible part of the `0826-v1` local
-evaluation. Model weights, datasets, embedding caches, and JSON outputs must
-live outside this Git repository.
+The scripts in `scripts/` reproduce the `0826-v1/v2/v3` evaluation that led to
+the `0.1.0` artifact selection. Model weights, datasets, embedding caches, and
+raw JSON outputs must live outside this Git repository.
 
 Install all optional dependencies used by the evaluation lane:
 
@@ -99,3 +99,24 @@ An artifact is recommended only when it passes the representation, ranking,
 downstream, and resource gates registered for its role. Safety stops, failed
 thresholds, and slower quantized kernels remain visible results. Upstream H100
 numbers are not mixed with local Apple M4 Pro measurements.
+
+Revision 1/2 strict numerical failures are historical results, not erased by
+revision 3. Revision 3 uses observable effectiveness as pass/fail while keeping
+rank agreement and hidden-state drift as mandatory diagnostics. Its accepted
+report SHA-256 is
+`410b9cf7756e0718816b23a46f0d99e0f3e6574e4eb515cc5a99cff131057316`.
+
+## Public release tables
+
+The compact public JSON and Markdown tables are generated from the pinned raw
+evidence rather than transcribed manually:
+
+```bash
+python tools/build_release_benchmarks.py \
+  --data-root "$DATA_ROOT" \
+  --json-output docs/benchmarks/0826-results.json \
+  --markdown-output docs/benchmarks/0826-results.md \
+  --machine "MacBook Pro, Apple M4 Pro, 48 GB unified memory"
+```
+
+The generated JSON records a SHA-256 digest for every source report consumed.
