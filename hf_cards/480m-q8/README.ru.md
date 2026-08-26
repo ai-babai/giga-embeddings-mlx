@@ -107,3 +107,26 @@ scores = queries @ documents.T
 Проверено на Apple Silicon/macOS. Q8 нужна прежде всего для экономии памяти и
 места, а не для гарантированного ускорения относительно BF16. Это независимая
 квантизация `ai-babai`, а не официальный релиз `ai-sage`.
+
+## Цитирование
+
+Пожалуйста, цитируйте и этот MLX-релиз, и оригинальную работу Giga-Embeddings:
+
+```bibtex
+@software{popkov2026gigaembeddingsmlx,
+  author  = {Maksim Popkov},
+  title   = {Giga Embeddings MLX},
+  year    = {2026},
+  version = {0.1.2},
+  url     = {https://github.com/ai-babai/giga-embeddings-mlx}
+}
+
+@misc{kolodin2026gigaembeddings,
+  title         = {Giga-Embeddings: Mixture-of-Experts Encoders for High-Throughput Text Embeddings},
+  author        = {Egor Kolodin and Egor Krasnoperov and Evgeniy Kosarev and Fyodor Minkin},
+  year          = {2026},
+  eprint        = {2608.23806},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2608.23806}
+}
+```

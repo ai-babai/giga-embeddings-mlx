@@ -236,7 +236,7 @@ process serves one model and serializes Metal inference.
   choice and is not performed by the weight loader.
 - The local quality benchmark is not an official upstream leaderboard result.
 
-## Development, license, and citation
+## Development and license
 
 Conversion and evaluation remain developer-facing and are not exposed by the
 end-user CLI. See [CONTRIBUTING.md](CONTRIBUTING.md),
@@ -244,6 +244,28 @@ end-user CLI. See [CONTRIBUTING.md](CONTRIBUTING.md),
 
 The independent MLX runtime is MIT-licensed. Original model licenses and notices
 remain attached to their repositories; see
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Cite the original
-[Giga-Embeddings paper](https://arxiv.org/abs/2608.23806) and this software using
-[CITATION.cff](CITATION.cff).
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Citation
+
+Please cite both this MLX software release and the original Giga-Embeddings
+work. The same metadata is available in [CITATION.cff](CITATION.cff).
+
+```bibtex
+@software{popkov2026gigaembeddingsmlx,
+  author  = {Maksim Popkov},
+  title   = {Giga Embeddings MLX},
+  year    = {2026},
+  version = {0.1.2},
+  url     = {https://github.com/ai-babai/giga-embeddings-mlx}
+}
+
+@misc{kolodin2026gigaembeddings,
+  title         = {Giga-Embeddings: Mixture-of-Experts Encoders for High-Throughput Text Embeddings},
+  author        = {Egor Kolodin and Egor Krasnoperov and Evgeniy Kosarev and Fyodor Minkin},
+  year          = {2026},
+  eprint        = {2608.23806},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2608.23806}
+}
+```

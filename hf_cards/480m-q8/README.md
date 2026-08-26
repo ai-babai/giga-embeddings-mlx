@@ -107,3 +107,27 @@ hardware details, and evidence hashes are in the
 Tested on Apple Silicon/macOS. Q8 is primarily a memory and disk optimization,
 not a guaranteed speed-up over BF16. This is an independent `ai-babai`
 quantization, not an official `ai-sage` release.
+
+## Citation
+
+Please cite both this MLX software release and the original Giga-Embeddings
+work:
+
+```bibtex
+@software{popkov2026gigaembeddingsmlx,
+  author  = {Maksim Popkov},
+  title   = {Giga Embeddings MLX},
+  year    = {2026},
+  version = {0.1.2},
+  url     = {https://github.com/ai-babai/giga-embeddings-mlx}
+}
+
+@misc{kolodin2026gigaembeddings,
+  title         = {Giga-Embeddings: Mixture-of-Experts Encoders for High-Throughput Text Embeddings},
+  author        = {Egor Kolodin and Egor Krasnoperov and Evgeniy Kosarev and Fyodor Minkin},
+  year          = {2026},
+  eprint        = {2608.23806},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2608.23806}
+}
+```
