@@ -126,7 +126,11 @@ def retrieval_effectiveness(
             if doc_id in document_index
         }
         order = np.argsort(-scores[row_index])
-        ranks = [rank for rank, doc_index in enumerate(order, start=1) if doc_index in relevant]
+        ranks = [
+            rank
+            for rank, doc_index in enumerate(order, start=1)
+            if doc_index in relevant
+        ]
         reciprocal_ranks.append(1.0 / min(ranks) if ranks else 0.0)
         dcg = sum(
             1.0 / np.log2(rank + 1)
@@ -134,11 +138,13 @@ def retrieval_effectiveness(
             if doc_index in relevant
         )
         ideal = sum(
-            1.0 / np.log2(rank + 1)
-            for rank in range(1, min(len(relevant), 10) + 1)
+            1.0 / np.log2(rank + 1) for rank in range(1, min(len(relevant), 10) + 1)
         )
         ndcg10.append(dcg / ideal if ideal else 0.0)
-    return {"mrr": float(np.mean(reciprocal_ranks)), "ndcg_at_10": float(np.mean(ndcg10))}
+    return {
+        "mrr": float(np.mean(reciprocal_ranks)),
+        "ndcg_at_10": float(np.mean(ndcg10)),
+    }
 
 
 def ranking_metrics(
@@ -161,7 +167,9 @@ def ranking_metrics(
     )
     return {
         "top1_agreement": float(
-            np.mean(np.argmax(base_scores, axis=1) == np.argmax(candidate_scores, axis=1))
+            np.mean(
+                np.argmax(base_scores, axis=1) == np.argmax(candidate_scores, axis=1)
+            )
         ),
         "mean_top10_overlap": float(np.mean(overlap)),
         "min_top10_overlap": float(np.min(overlap)),
@@ -186,18 +194,12 @@ def subset_embeddings(
     }
 
 
-def compare(
+def ranking_comparison(
     base: dict[str, np.ndarray],
     candidate: dict[str, np.ndarray],
-    aligned: list[dict],
     queries: list[dict],
     documents: list[dict],
 ) -> dict:
-    aligned_cosine = np.sum(base["aligned"] * candidate["aligned"], axis=1)
-    triangle = np.triu_indices(len(aligned), k=1)
-    base_pairwise = (base["aligned"] @ base["aligned"].T)[triangle]
-    candidate_pairwise = (candidate["aligned"] @ candidate["aligned"].T)[triangle]
-    ranking = ranking_metrics(base, candidate, queries, documents)
     per_family = {}
     for family in INSTRUCTIONS:
         query_indices = [i for i, row in enumerate(queries) if row["family"] == family]
@@ -213,6 +215,24 @@ def compare(
             family_documents,
         )
     return {
+        "ranking": ranking_metrics(base, candidate, queries, documents),
+        "ranking_by_family": per_family,
+    }
+
+
+def compare(
+    base: dict[str, np.ndarray],
+    candidate: dict[str, np.ndarray],
+    aligned: list[dict],
+    queries: list[dict],
+    documents: list[dict],
+) -> dict:
+    aligned_cosine = np.sum(base["aligned"] * candidate["aligned"], axis=1)
+    triangle = np.triu_indices(len(aligned), k=1)
+    base_pairwise = (base["aligned"] @ base["aligned"].T)[triangle]
+    candidate_pairwise = (candidate["aligned"] @ candidate["aligned"].T)[triangle]
+    ranking_results = ranking_comparison(base, candidate, queries, documents)
+    return {
         "min_aligned_cosine": float(aligned_cosine.min()),
         "mean_aligned_cosine": float(aligned_cosine.mean()),
         "similarity_spearman": float(
@@ -224,8 +244,7 @@ def compare(
         "max_abs_similarity_delta": float(
             np.max(np.abs(base_pairwise - candidate_pairwise))
         ),
-        "ranking": ranking,
-        "ranking_by_family": per_family,
+        **ranking_results,
     }
 
 

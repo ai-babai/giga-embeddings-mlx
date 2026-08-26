@@ -11,7 +11,7 @@ import torch
 import torch.nn.functional as F
 from transformers import AutoModel, AutoTokenizer
 
-from evaluate_holdout import INSTRUCTIONS, compare, ranking_metrics, read_jsonl
+from evaluate_holdout import INSTRUCTIONS, compare, ranking_comparison, read_jsonl
 from giga_embeddings_mlx.prompting import format_query
 
 
@@ -184,7 +184,7 @@ def main() -> None:
         "mlx_cache": str(args.mlx_cache.resolve()),
         "mlx_cache_sha256": file_sha256(args.mlx_cache),
         "metrics": (
-            {"ranking": ranking_metrics(reference, mlx_values, queries, documents)}
+            ranking_comparison(reference, mlx_values, queries, documents)
             if args.retrieval_only
             else compare(
                 reference,
