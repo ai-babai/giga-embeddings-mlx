@@ -15,7 +15,7 @@ ARTIFACTS = {
     "480m-q8": {
         "source_dir": "480m-q8-g64",
         "manifest": "480m-q8-g64.json",
-        "repo_id": "ai-babai/giga-embeddings-0826-480m-mlx-q8-g64",
+        "repo_id": "ai-babai/giga-embeddings-0826-480m-mlx-q8",
         "base_model": "ai-sage/Giga-Embeddings-instruct-480M-0826",
         "source_revision": "2d0c1a92716eef0e5b6972df85b5883eb5b4f57a",
         "policy": "uniform affine Q8",
@@ -25,7 +25,7 @@ ARTIFACTS = {
     "3b-q8": {
         "source_dir": "3b-q8-edges-bf16-g64",
         "manifest": "3b-q8-edges-bf16-g64.json",
-        "repo_id": "ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64",
+        "repo_id": "ai-babai/giga-embeddings-0826-3b-mlx-q8",
         "base_model": "ai-sage/Giga-Embeddings-instruct-3B-0826",
         "source_revision": "ed7db5c91b900b39381b27b6e9c0a3d31137cd29",
         "policy": "affine Q8 with BF16 embedding/final layers",
@@ -35,7 +35,7 @@ ARTIFACTS = {
     "10b-a1.8b-q8": {
         "source_dir": "10b-a1.8b-q8-g64",
         "manifest": "10b-a1.8b-q8-g64.json",
-        "repo_id": "ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64",
+        "repo_id": "ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8",
         "base_model": "ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826",
         "source_revision": "1cb3ad3374dbf0eb9130546ca38b262de5f60287",
         "policy": "affine Q8 with BF16 routers/norms",

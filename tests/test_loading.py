@@ -32,7 +32,7 @@ def test_default_uses_pinned_release_and_forwards_cache_options(
 
     assert resolved == snapshot.resolve()
     assert observed == {
-        "repo_id": "ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64",
+        "repo_id": "ai-babai/giga-embeddings-0826-3b-mlx-q8",
         "revision": "829506daf10dff1abe75bd8412e3ad2ab1856123",
         "cache_dir": str(cache_dir),
         "local_files_only": True,

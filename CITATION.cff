@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: Popkov
     given-names: Maksim
-version: 0.1.1
+version: 0.1.2
 date-released: 2026-08-26
 license: MIT
 repository-code: "https://github.com/ai-babai/giga-embeddings-mlx"

@@ -9,12 +9,12 @@ three tested Q8 versions of the Giga Embeddings `0826` family—without PyTorch,
 a cloud API, or Python code from model repositories during normal inference.
 
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
-[MLX models](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
+[MLX models](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-for-apple-silicon-mlx-q8-6a8eec40b26f6543f5da3244) ·
 [Original paper](https://arxiv.org/abs/2608.23806) ·
 [Full MLX benchmark](docs/benchmarks/0826-results.md) ·
 [Latest release](https://github.com/ai-babai/giga-embeddings-mlx/releases/latest)
 
-![Choose a Giga Embeddings 0826 MLX model for Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.1)
+![Choose a Giga Embeddings 0826 MLX model for Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
 
 ## Why this MLX port?
 
@@ -68,9 +68,9 @@ first use and then reuses the local cache.
 
 | MLX model | Best for | Original Russian MTEB¹ | Our Q8 retrieval check² | Download | Peak memory³ |
 |---|---|---:|---:|---:|---:|
-| **[3B Q8 + BF16 edges](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64)** | **recommended default** | **74.56** | **NDCG@10 Δ +0.00181** | **3.755 GB** | **5.137 GB** |
-| [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64) | smallest and fastest | 70.98 | NDCG@10 Δ +0.00289 | 0.525 GB | 1.339 GB |
-| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64) | high-capacity research | 74.98 | aggregate Δ −0.00046 | 11.144 GB | 14.423 GB |
+| **[3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8)** | **recommended default** | **74.56** | **NDCG@10 Δ +0.00181** | **3.755 GB** | **5.137 GB** |
+| [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8) | smallest and fastest | 70.98 | NDCG@10 Δ +0.00289 | 0.525 GB | 1.339 GB |
+| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8) | high-capacity research | 74.98 | aggregate Δ −0.00046 | 11.144 GB | 14.423 GB |
 
 1. The original authors' task-macro MTEB score from the
    [Giga-Embeddings paper](https://arxiv.org/html/2608.23806#S4). It was measured
