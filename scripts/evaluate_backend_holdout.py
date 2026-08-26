@@ -11,7 +11,7 @@ import torch
 import torch.nn.functional as F
 from transformers import AutoModel, AutoTokenizer
 
-from evaluate_holdout import INSTRUCTIONS, compare, read_jsonl
+from evaluate_holdout import INSTRUCTIONS, compare, ranking_metrics, read_jsonl
 from giga_embeddings_mlx.prompting import format_query
 
 
@@ -61,6 +61,7 @@ def load_or_create_reference(
     device: torch.device,
     batch_size: int,
     aligned_batch_size: int,
+    retrieval_only: bool,
 ) -> dict[str, np.ndarray]:
     if cache_path.exists():
         with np.load(cache_path) as stored:
@@ -77,11 +78,6 @@ def load_or_create_reference(
         .eval()
     )
     specifications = {
-        "aligned": (
-            [row["text"] for row in aligned],
-            aligned_batch_size,
-            2048,
-        ),
         "queries": (
             [format_query(INSTRUCTIONS[row["family"]], row["text"]) for row in queries],
             batch_size,
@@ -93,6 +89,15 @@ def load_or_create_reference(
             512,
         ),
     }
+    if not retrieval_only:
+        specifications = {
+            "aligned": (
+                [row["text"] for row in aligned],
+                aligned_batch_size,
+                2048,
+            ),
+            **specifications,
+        }
     values = {}
     for section, (texts, section_batch_size, max_length) in specifications.items():
         print(f"[backend-holdout] encoding PyTorch BF16: {section}", flush=True)
@@ -125,6 +130,7 @@ def main() -> None:
     parser.add_argument("--device", choices=("cpu", "mps"), default="mps")
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--aligned-batch-size", type=int, default=1)
+    parser.add_argument("--retrieval-only", action="store_true")
     args = parser.parse_args()
 
     aligned = read_jsonl(args.holdout / "aligned-texts.jsonl")
@@ -139,15 +145,20 @@ def main() -> None:
         device=torch.device(args.device),
         batch_size=args.batch_size,
         aligned_batch_size=args.aligned_batch_size,
+        retrieval_only=args.retrieval_only,
     )
     with np.load(args.mlx_cache) as stored:
         mlx_values = {key: stored[key] for key in stored.files}
 
     expected_shapes = {
-        "aligned": (len(aligned), reference["aligned"].shape[1]),
         "queries": (len(queries), reference["queries"].shape[1]),
         "documents": (len(documents), reference["documents"].shape[1]),
     }
+    if not args.retrieval_only:
+        expected_shapes = {
+            "aligned": (len(aligned), reference["aligned"].shape[1]),
+            **expected_shapes,
+        }
     for section, expected_shape in expected_shapes.items():
         if reference[section].shape != expected_shape:
             raise ValueError(
@@ -167,16 +178,21 @@ def main() -> None:
         "query_instructions": INSTRUCTIONS,
         "batch_size": args.batch_size,
         "aligned_batch_size": args.aligned_batch_size,
+        "retrieval_only": args.retrieval_only,
         "reference_cache": str(args.reference_cache.resolve()),
         "reference_cache_sha256": file_sha256(args.reference_cache),
         "mlx_cache": str(args.mlx_cache.resolve()),
         "mlx_cache_sha256": file_sha256(args.mlx_cache),
-        "metrics": compare(
-            reference,
-            mlx_values,
-            aligned,
-            queries,
-            documents,
+        "metrics": (
+            {"ranking": ranking_metrics(reference, mlx_values, queries, documents)}
+            if args.retrieval_only
+            else compare(
+                reference,
+                mlx_values,
+                aligned,
+                queries,
+                documents,
+            )
         ),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
