@@ -31,7 +31,7 @@ inference: false
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Original paper](https://arxiv.org/abs/2608.23806)
 
-![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
+![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
 
 The recommended default for local Russian and English semantic search, RAG,
 text similarity, clustering, and classification on Apple Silicon. This mixed

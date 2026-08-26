@@ -31,7 +31,7 @@ inference: false
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Оригинальная статья](https://arxiv.org/abs/2608.23806)
 
-![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
+![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
 
 Компактная модель для локального семантического поиска, RAG, сравнения текстов,
 кластеризации и классификации на русском и английском языках. Это самый маленький

@@ -33,7 +33,7 @@ inference: false
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Оригинальная статья](https://arxiv.org/abs/2608.23806)
 
-![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
+![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
 
 > **Исследовательская модель с предупреждением по поиску в коде.** Совокупное
 > качество поиска прошло порог приёмки, но NDCG@10 для кода изменился на

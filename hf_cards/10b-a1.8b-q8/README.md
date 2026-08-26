@@ -33,7 +33,7 @@ inference: false
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Original paper](https://arxiv.org/abs/2608.23806)
 
-![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
+![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
 
 > **Research model with a code-search warning.** Overall retrieval quality
 > passed our acceptance gate, but code-search NDCG@10 changed by `−0.01297`

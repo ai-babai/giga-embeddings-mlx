@@ -14,7 +14,7 @@
 [Полный MLX-бенчмарк](docs/benchmarks/0826-results.md) ·
 [Последний релиз](https://github.com/ai-babai/giga-embeddings-mlx/releases/latest)
 
-![Какую модель Giga Embeddings 0826 MLX выбрать для Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
+![Какую модель Giga Embeddings 0826 MLX выбрать для Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
 
 ## Зачем нужен этот MLX-порт?
 

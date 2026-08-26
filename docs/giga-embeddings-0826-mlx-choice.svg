@@ -1,109 +1,118 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1280" viewBox="0 0 2400 1280" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1080" viewBox="0 0 2400 1080" role="img" aria-labelledby="title desc">
   <title id="title">Choose a Giga Embeddings 0826 MLX model for Apple Silicon</title>
-  <desc id="desc">Comparison of the recommended 3B model, compact 480M model, and research 10B model by original Russian MTEB score, download size, peak memory, local quantization quality check, and batch speed.</desc>
-  <rect width="2400" height="1280" fill="#0d1117"/>
+  <desc id="desc">Aligned comparison of the recommended 3B model, compact 480M model, and research 10B model by original Russian benchmark score, download size, peak memory, one-text latency, and local Q8 quality check.</desc>
+  <rect width="2400" height="1080" fill="#0d1117"/>
   <style>
-    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #f0f6fc; }
-    .muted { fill: #9da7b3; }
+    text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      fill: #f0f6fc;
+      font-variant-numeric: tabular-nums;
+    }
+    .muted { fill: #a6b0bd; }
     .blue { fill: #79c0ff; }
     .green { fill: #7ee787; }
     .amber { fill: #f2cc60; }
-    .small { font-size: 31px; }
-    .label { font-size: 34px; fill: #9da7b3; }
-    .value { font-size: 53px; font-weight: 700; }
-    .card-title { font-size: 48px; font-weight: 750; }
+    .metric-label { font-size: 31px; font-weight: 650; }
+    .metric-context { font-size: 25px; fill: #a6b0bd; }
+    .metric-value { font-size: 49px; font-weight: 720; }
+    .card-title { font-size: 47px; font-weight: 750; }
+    .card-subtitle { font-size: 29px; }
+    .status-label { font-size: 27px; font-weight: 750; letter-spacing: 0.3px; }
+    .status-main { font-size: 33px; font-weight: 700; }
+    .status-detail { font-size: 24px; fill: #a6b0bd; }
   </style>
 
-  <text x="70" y="92" font-size="62" font-weight="760">Giga Embeddings 0826 for Apple Silicon</text>
-  <text x="70" y="148" font-size="35" class="muted">Choose a local MLX Q8 model for Russian semantic search, RAG, and text similarity</text>
+  <text x="70" y="82" font-size="60" font-weight="760">Giga Embeddings 0826 for Apple Silicon</text>
+  <text x="70" y="137" font-size="34" class="muted">Choose a local MLX Q8 model for Russian semantic search, RAG, and text similarity</text>
 
-  <g transform="translate(70 210)">
-    <rect width="720" height="735" rx="28" fill="#162131" stroke="#58a6ff" stroke-width="4"/>
-    <rect x="28" y="28" width="260" height="54" rx="27" fill="#1f6feb"/>
-    <text x="158" y="65" font-size="29" font-weight="700" text-anchor="middle">★ RECOMMENDED</text>
-    <text x="36" y="148" class="card-title">3B MLX Q8</text>
-    <text x="36" y="197" font-size="31" class="blue">Best balance for most applications</text>
+  <g transform="translate(70 180)">
+    <rect width="720" height="740" rx="28" fill="#162131" stroke="#58a6ff" stroke-width="4"/>
+    <rect x="38" y="30" width="236" height="48" rx="24" fill="#1f6feb"/>
+    <text x="154" y="63" font-size="23" font-weight="720" text-anchor="middle">BEST DEFAULT</text>
+    <text x="38" y="145" class="card-title">3B MLX Q8</text>
+    <text x="38" y="193" class="card-subtitle blue">Best balance for most applications</text>
+    <line x1="38" y1="224" x2="682" y2="224" stroke="#2f4055" stroke-width="2"/>
 
-    <text x="36" y="276" class="label">Russian quality score</text>
-    <text x="36" y="312" class="small muted">Original model · higher is better</text>
-    <text x="36" y="368" class="value">74.56</text>
-    <text x="460" y="285" class="label">Download</text>
-    <text x="460" y="346" class="value">3.76 GB</text>
+    <text x="38" y="274" class="metric-label">Russian quality score</text>
+    <text x="38" y="310" class="metric-context">Original BF16 · higher is better</text>
+    <text x="38" y="368" class="metric-value">74.56</text>
+    <text x="400" y="274" class="metric-label">Download size</text>
+    <text x="400" y="310" class="metric-context">Model files</text>
+    <text x="400" y="368" class="metric-value">3.76 GB</text>
 
-    <text x="36" y="420" class="label">Peak memory</text>
-    <text x="36" y="458" class="small muted">16 long texts</text>
-    <text x="36" y="516" class="value">5.14 GB</text>
-    <text x="460" y="420" class="label">Batch speed</text>
-    <text x="460" y="458" class="small muted">16 long texts</text>
-    <text x="460" y="516" class="value">0.73 docs/s</text>
+    <line x1="38" y1="404" x2="682" y2="404" stroke="#2f4055" stroke-width="2"/>
+    <text x="38" y="454" class="metric-label">Peak memory</text>
+    <text x="38" y="490" class="metric-context">Batch of 16 long texts</text>
+    <text x="38" y="548" class="metric-value">5.14 GB</text>
+    <text x="400" y="454" class="metric-label">One-text time</text>
+    <text x="400" y="490" class="metric-context">Typical · 512 tokens</text>
+    <text x="400" y="548" class="metric-value">0.64 s</text>
 
-    <rect x="30" y="555" width="660" height="124" rx="20" fill="#123621" stroke="#2ea043" stroke-width="2"/>
-    <text x="54" y="602" font-size="30" class="green" font-weight="700">LOCAL Q8 QUALITY CHECK</text>
-    <text x="54" y="650" font-size="36" font-weight="700">No aggregate regression observed</text>
-    <text x="36" y="716" class="small muted">NDCG@10 change vs native MLX BF16: +0.00181</text>
+    <rect x="36" y="582" width="648" height="124" rx="18" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+    <text x="60" y="623" class="status-label green">Q8 QUALITY CHECK</text>
+    <text x="60" y="665" class="status-main">Q8 preserved overall quality</text>
+    <text x="60" y="695" class="status-detail">Q8 vs MLX BF16 · frozen retrieval test</text>
   </g>
 
-  <g transform="translate(840 210)">
-    <rect width="720" height="735" rx="28" fill="#121a24" stroke="#303d4d" stroke-width="3"/>
-    <rect x="28" y="28" width="210" height="54" rx="27" fill="#26384d"/>
-    <text x="133" y="65" font-size="29" font-weight="700" text-anchor="middle">COMPACT</text>
-    <text x="36" y="148" class="card-title">480M Q8</text>
-    <text x="36" y="197" font-size="31" class="blue">Smallest and fastest released model</text>
+  <g transform="translate(840 180)">
+    <rect width="720" height="740" rx="28" fill="#121a24" stroke="#303d4d" stroke-width="3"/>
+    <rect x="38" y="30" width="236" height="48" rx="24" fill="#26384d"/>
+    <text x="155" y="63" font-size="23" font-weight="720" text-anchor="middle">SMALLEST</text>
+    <text x="38" y="145" class="card-title">480M MLX Q8</text>
+    <text x="38" y="193" class="card-subtitle blue">Smallest and fastest released model</text>
+    <line x1="38" y1="224" x2="682" y2="224" stroke="#303d4d" stroke-width="2"/>
 
-    <text x="36" y="276" class="label">Russian quality score</text>
-    <text x="36" y="312" class="small muted">Original model · higher is better</text>
-    <text x="36" y="368" class="value">70.98</text>
-    <text x="460" y="285" class="label">Download</text>
-    <text x="460" y="346" class="value">0.53 GB</text>
+    <text x="38" y="274" class="metric-label">Russian quality score</text>
+    <text x="38" y="310" class="metric-context">Original BF16 · higher is better</text>
+    <text x="38" y="368" class="metric-value">70.98</text>
+    <text x="400" y="274" class="metric-label">Download size</text>
+    <text x="400" y="310" class="metric-context">Model files</text>
+    <text x="400" y="368" class="metric-value">0.53 GB</text>
 
-    <text x="36" y="420" class="label">Peak memory</text>
-    <text x="36" y="458" class="small muted">16 long texts</text>
-    <text x="36" y="516" class="value">1.34 GB</text>
-    <text x="460" y="420" class="label">Batch speed</text>
-    <text x="460" y="458" class="small muted">16 long texts</text>
-    <text x="460" y="516" class="value">6.38 docs/s</text>
+    <line x1="38" y1="404" x2="682" y2="404" stroke="#303d4d" stroke-width="2"/>
+    <text x="38" y="454" class="metric-label">Peak memory</text>
+    <text x="38" y="490" class="metric-context">Batch of 16 long texts</text>
+    <text x="38" y="548" class="metric-value">1.34 GB</text>
+    <text x="400" y="454" class="metric-label">One-text time</text>
+    <text x="400" y="490" class="metric-context">Typical · 512 tokens</text>
+    <text x="400" y="548" class="metric-value">0.07 s</text>
 
-    <rect x="30" y="555" width="660" height="124" rx="20" fill="#123621" stroke="#2ea043" stroke-width="2"/>
-    <text x="54" y="602" font-size="30" class="green" font-weight="700">LOCAL Q8 QUALITY CHECK</text>
-    <text x="54" y="650" font-size="36" font-weight="700">No aggregate regression observed</text>
-    <text x="36" y="716" class="small muted">NDCG@10 change vs native MLX BF16: +0.00289</text>
+    <rect x="36" y="582" width="648" height="124" rx="18" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+    <text x="60" y="623" class="status-label green">Q8 QUALITY CHECK</text>
+    <text x="60" y="665" class="status-main">Q8 preserved overall quality</text>
+    <text x="60" y="695" class="status-detail">Q8 vs MLX BF16 · frozen retrieval test</text>
   </g>
 
-  <g transform="translate(1610 210)">
-    <rect width="720" height="735" rx="28" fill="#211d16" stroke="#9e6a03" stroke-width="3"/>
-    <rect x="28" y="28" width="210" height="54" rx="27" fill="#5b4517"/>
-    <text x="133" y="65" font-size="29" font-weight="700" text-anchor="middle">RESEARCH</text>
-    <text x="36" y="148" class="card-title">10B-A1.8B Q8</text>
-    <text x="36" y="197" font-size="31" class="amber">High capacity with a code warning</text>
+  <g transform="translate(1610 180)">
+    <rect width="720" height="740" rx="28" fill="#211d16" stroke="#9e6a03" stroke-width="3"/>
+    <rect x="38" y="30" width="236" height="48" rx="24" fill="#5b4517"/>
+    <text x="154" y="63" font-size="23" font-weight="720" text-anchor="middle">EXPERIMENTAL</text>
+    <text x="38" y="145" class="card-title">10B-A1.8B MLX Q8</text>
+    <text x="38" y="193" class="card-subtitle amber">High capacity with a code warning</text>
+    <line x1="38" y1="224" x2="682" y2="224" stroke="#534522" stroke-width="2"/>
 
-    <text x="36" y="276" class="label">Russian quality score</text>
-    <text x="36" y="312" class="small muted">Original model · higher is better</text>
-    <text x="36" y="368" class="value">74.98</text>
-    <text x="460" y="285" class="label">Download</text>
-    <text x="460" y="346" class="value">11.14 GB</text>
+    <text x="38" y="274" class="metric-label">Russian quality score</text>
+    <text x="38" y="310" class="metric-context">Original BF16 · higher is better</text>
+    <text x="38" y="368" class="metric-value">74.98</text>
+    <text x="400" y="274" class="metric-label">Download size</text>
+    <text x="400" y="310" class="metric-context">Model files</text>
+    <text x="400" y="368" class="metric-value">11.14 GB</text>
 
-    <text x="36" y="420" class="label">Peak memory</text>
-    <text x="36" y="458" class="small muted">16 long texts</text>
-    <text x="36" y="516" class="value">14.42 GB</text>
-    <text x="460" y="420" class="label">Batch speed</text>
-    <text x="460" y="458" class="small muted">16 long texts</text>
-    <text x="460" y="516" class="value">0.76 docs/s</text>
+    <line x1="38" y1="404" x2="682" y2="404" stroke="#534522" stroke-width="2"/>
+    <text x="38" y="454" class="metric-label">Peak memory</text>
+    <text x="38" y="490" class="metric-context">Batch of 16 long texts</text>
+    <text x="38" y="548" class="metric-value">14.42 GB</text>
+    <text x="400" y="454" class="metric-label">One-text time</text>
+    <text x="400" y="490" class="metric-context">Typical · 512 tokens</text>
+    <text x="400" y="548" class="metric-value">0.60 s</text>
 
-    <rect x="30" y="555" width="660" height="124" rx="20" fill="#3b2d12" stroke="#d29922" stroke-width="2"/>
-    <text x="54" y="602" font-size="30" class="amber" font-weight="700">QUALITY WARNING</text>
-    <text x="54" y="650" font-size="36" font-weight="700">Aggregate passed; code was weaker</text>
-    <text x="36" y="716" class="small muted">Aggregate Δ −0.00046 · code NDCG@10 Δ −0.01297</text>
+    <rect x="36" y="582" width="648" height="124" rx="18" fill="#3b2d12" stroke="#d29922" stroke-width="2"/>
+    <text x="60" y="623" class="status-label amber">Q8 QUALITY WARNING</text>
+    <text x="60" y="665" class="status-main">Code-search score fell slightly</text>
+    <text x="60" y="695" class="status-detail">NDCG@10 −0.013 vs MLX BF16</text>
   </g>
 
-  <g transform="translate(70 1002)">
-    <text x="0" y="0" font-size="35" font-weight="700">What the quality numbers mean</text>
-    <rect x="0" y="34" width="2260" height="112" rx="22" fill="#161b22" stroke="#30363d" stroke-width="2"/>
-    <text x="45" y="104" font-size="34" class="blue" font-weight="700">Official BF16 model quality</text>
-    <text x="520" y="104" font-size="42" class="muted">→</text>
-    <text x="590" y="104" font-size="34" font-weight="700">Native MLX BF16 port passed</text>
-    <text x="1168" y="104" font-size="42" class="muted">→</text>
-    <text x="1238" y="104" font-size="34" class="green" font-weight="700">Q8 measured against MLX BF16</text>
-    <text x="0" y="198" class="small muted">Official MTEB was not rerun on Q8. Local speed and memory: M4 Pro, 48 GB; batch = 16 texts of 1024 tokens.</text>
-    <text x="0" y="239" class="small muted">Full protocol, limitations, and accessible tables are in the benchmark report.</text>
-  </g>
+  <text x="70" y="980" font-size="27" class="muted">Quality evidence: official BF16 score · native MLX BF16 gate · released Q8 compared with MLX BF16</text>
+  <text x="70" y="1022" font-size="27" class="muted">Speed and memory: M4 Pro, 48 GB · exact protocol and limitations are in the benchmark report</text>
+  <text x="70" y="1060" font-size="24" class="muted">Official MTEB was not rerun on Q8.</text>
 </svg>

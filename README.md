@@ -14,7 +14,7 @@ a cloud API, or Python code from model repositories during normal inference.
 [Full MLX benchmark](docs/benchmarks/0826-results.md) ·
 [Latest release](https://github.com/ai-babai/giga-embeddings-mlx/releases/latest)
 
-![Choose a Giga Embeddings 0826 MLX model for Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.2)
+![Choose a Giga Embeddings 0826 MLX model for Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
 
 ## Why this MLX port?
 
