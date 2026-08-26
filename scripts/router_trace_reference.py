@@ -25,12 +25,12 @@ def main() -> None:
 
     texts = [row["text"] for row in read_jsonl(args.texts_jsonl)]
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
-    model = AutoModel.from_pretrained(
-        args.model_path, trust_remote_code=True, dtype=torch.bfloat16
-    ).cpu().eval()
-    gate_modules = [
-        layer.mlp.gate for layer in model.layers if hasattr(layer.mlp, "gate")
-    ]
+    model = (
+        AutoModel.from_pretrained(args.model_path, trust_remote_code=True, dtype=torch.bfloat16)
+        .cpu()
+        .eval()
+    )
+    gate_modules = [layer.mlp.gate for layer in model.layers if hasattr(layer.mlp, "gate")]
     layer_chunks: list[list[np.ndarray]] = [[] for _ in gate_modules]
     current: list[tuple[torch.Tensor, torch.Tensor]] = []
 
@@ -58,9 +58,7 @@ def main() -> None:
             current.clear()
             model(**encoded)
             if len(current) != len(gate_modules):
-                raise RuntimeError(
-                    f"Expected {len(gate_modules)} router calls, got {len(current)}"
-                )
+                raise RuntimeError(f"Expected {len(gate_modules)} router calls, got {len(current)}")
             valid = encoded["attention_mask"].numpy().astype(bool)
             batch, length = valid.shape
             for chunks, (indices, _weights) in zip(layer_chunks, current):
@@ -71,8 +69,7 @@ def main() -> None:
     for hook in hooks:
         hook.remove()
     arrays = {
-        f"layer_{index:02d}": np.concatenate(chunks)
-        for index, chunks in enumerate(layer_chunks)
+        f"layer_{index:02d}": np.concatenate(chunks) for index, chunks in enumerate(layer_chunks)
     }
     arrays["token_count"] = np.asarray(token_count, dtype=np.int64)
     args.output.parent.mkdir(parents=True, exist_ok=True)

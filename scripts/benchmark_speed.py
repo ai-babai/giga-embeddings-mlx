@@ -29,9 +29,7 @@ CASES = [
 
 def command_output(command: list[str]) -> str | None:
     try:
-        return subprocess.run(
-            command, check=True, capture_output=True, text=True
-        ).stdout.strip()
+        return subprocess.run(command, check=True, capture_output=True, text=True).stdout.strip()
     except (OSError, subprocess.CalledProcessError):
         return None
 

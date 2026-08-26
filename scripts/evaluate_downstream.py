@@ -17,9 +17,7 @@ from giga_embeddings_mlx.prompting import format_query
 
 STS_TASK = "RuSTSBenchmarkSTS"
 CLASSIFICATION_TASK = "RuToxicOKMLCUPClassification.v2"
-CLASSIFICATION_INSTRUCTION = (
-    "Classify whether the Russian text is toxic or non-toxic"
-)
+CLASSIFICATION_INSTRUCTION = "Classify whether the Russian text is toxic or non-toxic"
 
 
 def load_tasks():
@@ -40,9 +38,7 @@ def encode(model, texts: list[str], batch_size: int) -> np.ndarray:
     return np.concatenate(chunks)
 
 
-def create_embeddings(
-    path: Path, sts, classification, batch_size: int, section_dir: Path
-) -> dict:
+def create_embeddings(path: Path, sts, classification, batch_size: int, section_dir: Path) -> dict:
     model = load_embedding_model(path)
     sts_test = sts.dataset["test"]
     classification_instruction = CLASSIFICATION_INSTRUCTION
@@ -79,9 +75,7 @@ def load_or_create(cache: Path, path: Path, sts, classification, batch_size: int
     if cache.exists():
         with np.load(cache) as stored:
             return {key: stored[key] for key in stored.files}
-    values = create_embeddings(
-        path, sts, classification, batch_size, cache.with_suffix("")
-    )
+    values = create_embeddings(path, sts, classification, batch_size, cache.with_suffix(""))
     cache.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(cache, **values)
     return values
@@ -95,9 +89,7 @@ def evaluate(values: dict, sts, classification) -> dict:
         random_state=826,
         solver="liblinear",
     )
-    classifier.fit(
-        values["classification_train"], classification.dataset["train"]["label"]
-    )
+    classifier.fit(values["classification_train"], classification.dataset["train"]["label"])
     labels = np.asarray(classification.dataset["test"]["label"])
     predictions = classifier.predict(values["classification_test"])
     return {
@@ -120,9 +112,7 @@ def with_delta(base: dict, candidate: dict) -> dict:
     for family in ("ru_sts", "ru_classification"):
         for metric in set(base[family]).intersection(candidate[family]):
             if metric not in {"pairs", "train_samples", "test_samples"}:
-                result[family][f"{metric}_delta"] = (
-                    candidate[family][metric] - base[family][metric]
-                )
+                result[family][f"{metric}_delta"] = candidate[family][metric] - base[family][metric]
     return result
 
 
@@ -155,7 +145,10 @@ def main() -> None:
             args.batch_size,
         )
         results.append(
-            {"variant": path.name, **with_delta(base_metrics, evaluate(values, sts, classification))}
+            {
+                "variant": path.name,
+                **with_delta(base_metrics, evaluate(values, sts, classification)),
+            }
         )
     report = {
         "model": args.model,

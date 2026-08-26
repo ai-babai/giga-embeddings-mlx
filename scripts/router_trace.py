@@ -39,9 +39,7 @@ def create_trace(
         )
         input_ids = mx.array(encoded["input_ids"])
         attention_mask = mx.array(encoded["attention_mask"])
-        hidden, current = trace_model.forward_with_router_trace(
-            input_ids, attention_mask
-        )
+        hidden, current = trace_model.forward_with_router_trace(input_ids, attention_mask)
         mx.eval(hidden, *current)
         valid = np.asarray(encoded["attention_mask"], dtype=bool)
         if layers is None:
@@ -68,9 +66,7 @@ def create_trace(
 def compare_traces(base_path: Path, candidate_path: Path, experts: int) -> dict:
     with np.load(base_path) as base_file, np.load(candidate_path) as candidate_file:
         layer_keys = sorted(key for key in base_file.files if key.startswith("layer_"))
-        if layer_keys != sorted(
-            key for key in candidate_file.files if key.startswith("layer_")
-        ):
+        if layer_keys != sorted(key for key in candidate_file.files if key.startswith("layer_")):
             raise ValueError("Router layer sets differ")
         per_layer = []
         all_overlap = []
@@ -79,7 +75,9 @@ def compare_traces(base_path: Path, candidate_path: Path, experts: int) -> dict:
             base = base_file[key]
             candidate = candidate_file[key]
             if base.shape != candidate.shape:
-                raise ValueError(f"Router shape differs at {key}: {base.shape} vs {candidate.shape}")
+                raise ValueError(
+                    f"Router shape differs at {key}: {base.shape} vs {candidate.shape}"
+                )
             matches = (base[:, :, None] == candidate[:, None, :]).any(axis=2)
             overlap = matches.mean(axis=1)
             top1_changes = base[:, 0] != candidate[:, 0]
@@ -103,9 +101,7 @@ def compare_traces(base_path: Path, candidate_path: Path, experts: int) -> dict:
     return {
         "router_layers": len(per_layer),
         "mean_top4_set_overlap": float(np.concatenate(all_overlap).mean()),
-        "fully_different_top1_fraction": float(
-            np.concatenate(all_top1_changes).mean()
-        ),
+        "fully_different_top1_fraction": float(np.concatenate(all_top1_changes).mean()),
         "expert_frequency_max_drift_pp": max(
             row["expert_frequency_max_drift_pp"] for row in per_layer
         ),
@@ -134,9 +130,7 @@ def main() -> None:
 
     if args.command == "trace":
         source = (
-            args.calibration / "texts.jsonl"
-            if args.calibration is not None
-            else args.texts_jsonl
+            args.calibration / "texts.jsonl" if args.calibration is not None else args.texts_jsonl
         )
         rows = read_jsonl(source)
         create_trace(

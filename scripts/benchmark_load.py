@@ -56,9 +56,7 @@ def main() -> None:
             "The first measurement is process-cold but the OS page cache is not "
             "controlled; warm reload follows a complete materialized load."
         ),
-        "process_max_rss_bytes": int(
-            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        ),
+        "process_max_rss_bytes": int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")

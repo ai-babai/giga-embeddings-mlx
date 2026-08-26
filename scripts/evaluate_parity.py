@@ -72,10 +72,7 @@ def load_corpus(
     path: Path | None,
 ) -> tuple[list[str], list[dict], list[str], str | None]:
     if path is None:
-        records = [
-            {"id": f"builtin-{index:02d}", "text": text}
-            for index, text in enumerate(TEXTS)
-        ]
+        records = [{"id": f"builtin-{index:02d}", "text": text} for index, text in enumerate(TEXTS)]
         return TEXTS, records, TEXTS[:3], None
 
     raw = path.read_bytes()
@@ -112,8 +109,7 @@ def ranking(left: np.ndarray, right: np.ndarray) -> tuple[float, int]:
     left_order = np.argsort(-left_scores, axis=1)
     right_order = np.argsort(-right_scores, axis=1)
     overlap = [
-        len(set(a[:width]).intersection(b[:width])) / width
-        for a, b in zip(left_order, right_order)
+        len(set(a[:width]).intersection(b[:width])) / width for a, b in zip(left_order, right_order)
     ]
     return float(np.mean(overlap)), int(np.sum(left_order[:, 0] != right_order[:, 0]))
 
@@ -144,15 +140,11 @@ def hidden_metrics(
     return {
         "min_per_text_flattened_cosine": float(min(per_text_cosines)),
         "mean_per_text_flattened_cosine": float(np.mean(per_text_cosines)),
-        "global_valid_tokens_flattened_cosine": float(
-            np.dot(left, right) / denominator
-        ),
+        "global_valid_tokens_flattened_cosine": float(np.dot(left, right) / denominator),
         "max_abs_hidden_delta": float(
             max(
                 np.max(np.abs(left_values - right_values))
-                for left_values, right_values in zip(
-                    valid_reference, valid_candidate, strict=True
-                )
+                for left_values, right_values in zip(valid_reference, valid_candidate, strict=True)
             )
         ),
         "per_record_cosine": {
@@ -196,9 +188,7 @@ def main() -> None:
     content_token_lengths = [
         len(tokenizer.encode(text, add_special_tokens=False)) for text in texts
     ]
-    expected_content_lengths = [
-        record.get("expected_content_tokens") for record in records
-    ]
+    expected_content_lengths = [record.get("expected_content_tokens") for record in records]
     if any(expected is not None for expected in expected_content_lengths):
         mismatches = [
             {
@@ -226,9 +216,7 @@ def main() -> None:
     device = torch.device(device_name)
     torch_dtype = torch.float32 if args.dtype == "float32" else torch.bfloat16
     reference = (
-        AutoModel.from_pretrained(
-            args.model_path, trust_remote_code=True, dtype=torch_dtype
-        )
+        AutoModel.from_pretrained(args.model_path, trust_remote_code=True, dtype=torch_dtype)
         .to(device)
         .eval()
     )
@@ -239,9 +227,7 @@ def main() -> None:
     for index in selected_indices:
 
         def capture(_module, _inputs, output, *, layer_index=index):
-            reference_hidden_chunks[layer_index].append(
-                output.detach().float().cpu().numpy()
-            )
+            reference_hidden_chunks[layer_index].append(output.detach().float().cpu().numpy())
 
         handles.append(reference.layers[index].register_forward_hook(capture))
     reference_chunks = []
@@ -267,9 +253,7 @@ def main() -> None:
         solo_device = {key: value.to(device) for key, value in solo_encoded.items()}
         solo_hidden = reference(**solo_device).last_hidden_state
         solo_mask = solo_device["attention_mask"].unsqueeze(-1).to(solo_hidden.dtype)
-        solo_pooled = (solo_hidden * solo_mask).sum(1) / solo_mask.sum(1).clamp(
-            min=1e-6
-        )
+        solo_pooled = (solo_hidden * solo_mask).sum(1) / solo_mask.sum(1).clamp(min=1e-6)
         reference_solo = F.normalize(solo_pooled, dim=-1).float().cpu().numpy()
         padded_encoded = tokenizer(
             padding_texts,
@@ -280,12 +264,8 @@ def main() -> None:
         )
         padded_device = {key: value.to(device) for key, value in padded_encoded.items()}
         padded_hidden = reference(**padded_device).last_hidden_state
-        padded_mask = (
-            padded_device["attention_mask"].unsqueeze(-1).to(padded_hidden.dtype)
-        )
-        padded_pooled = (padded_hidden * padded_mask).sum(1) / padded_mask.sum(1).clamp(
-            min=1e-6
-        )
+        padded_mask = padded_device["attention_mask"].unsqueeze(-1).to(padded_hidden.dtype)
+        padded_pooled = (padded_hidden * padded_mask).sum(1) / padded_mask.sum(1).clamp(min=1e-6)
         reference_padded = F.normalize(padded_pooled, dim=-1).float().cpu().numpy()
 
     del (
@@ -317,9 +297,7 @@ def main() -> None:
         # Keep acceptance embeddings independent from diagnostic
         # materialization. Hidden-state capture is a separate pass over the
         # same inputs and cannot substitute its output for the measured path.
-        values = pool_and_normalize(
-            mlx_model.model(input_ids, attention_mask), attention_mask
-        )
+        values = pool_and_normalize(mlx_model.model(input_ids, attention_mask), attention_mask)
         mx.eval(values)
         mlx_chunks.append(np.array(values.astype(mx.float32), copy=True))
         _diagnostic_final, selected_hidden = (
@@ -380,8 +358,7 @@ def main() -> None:
         ],
         "batch_size": args.batch_size,
         "max_tokens_in_batch": max(
-            int(encoded["attention_mask"].sum(axis=1).max())
-            for encoded in encoded_batches
+            int(encoded["attention_mask"].sum(axis=1).max()) for encoded in encoded_batches
         ),
         "min_vector_cosine": float(row_cosines.min()),
         "mean_vector_cosine": float(row_cosines.mean()),
@@ -389,12 +366,8 @@ def main() -> None:
             str(record.get("id")): float(cosine)
             for record, cosine in zip(records, row_cosines, strict=True)
         },
-        "max_abs_similarity_delta": float(
-            np.max(np.abs(reference_scores - mlx_scores))
-        ),
-        "similarity_rmse": float(
-            np.sqrt(np.mean((reference_scores - mlx_scores) ** 2))
-        ),
+        "max_abs_similarity_delta": float(np.max(np.abs(reference_scores - mlx_scores))),
+        "similarity_rmse": float(np.sqrt(np.mean((reference_scores - mlx_scores) ** 2))),
         "similarity_spearman": float(spearmanr(reference_scores, mlx_scores).statistic),
         "mean_top10_overlap": top10_overlap,
         "top1_changes": top1_changes,

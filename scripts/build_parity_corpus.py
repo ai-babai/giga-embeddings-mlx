@@ -53,16 +53,14 @@ BASELINE_RECORDS = [
     (
         "query-ru-capital",
         "ru",
-        "Instruct: Given a query, retrieve relevant passages\n"
-        "Query: Где столица России?",
+        "Instruct: Given a query, retrieve relevant passages\nQuery: Где столица России?",
     ),
     ("document-ru-moscow", "ru", "Москва — столица Российской Федерации."),
     ("document-fr-paris", "multilingual", "Париж — столица Франции."),
     (
         "query-en-solar",
         "en",
-        "Instruct: Given a query, retrieve relevant passages\n"
-        "Query: How do solar panels work?",
+        "Instruct: Given a query, retrieve relevant passages\nQuery: How do solar panels work?",
     ),
     (
         "document-en-solar",
@@ -72,8 +70,7 @@ BASELINE_RECORDS = [
     (
         "code-fibonacci",
         "code",
-        "def fibonacci(n):\n"
-        "    return n if n < 2 else fibonacci(n - 1) + fibonacci(n - 2)",
+        "def fibonacci(n):\n    return n if n < 2 else fibonacci(n - 1) + fibonacci(n - 2)",
     ),
     (
         "code-sql-aggregation",
@@ -113,9 +110,9 @@ def main() -> None:
     args = parser.parse_args()
 
     tokenizer = Qwen2Tokenizer.from_pretrained(args.tokenizer_path)
-    special_tokens_per_record = len(
-        tokenizer.encode("", add_special_tokens=True)
-    ) - len(tokenizer.encode("", add_special_tokens=False))
+    special_tokens_per_record = len(tokenizer.encode("", add_special_tokens=True)) - len(
+        tokenizer.encode("", add_special_tokens=False)
+    )
     records = []
     for record_id, family, target, seed in LENGTH_SPECS:
         text = exact_length_text(tokenizer, seed, target)
@@ -134,12 +131,8 @@ def main() -> None:
             {
                 "id": record_id,
                 "family": family,
-                "expected_content_tokens": len(
-                    tokenizer.encode(text, add_special_tokens=False)
-                ),
-                "expected_model_tokens": len(
-                    tokenizer.encode(text, add_special_tokens=True)
-                ),
+                "expected_content_tokens": len(tokenizer.encode(text, add_special_tokens=False)),
+                "expected_model_tokens": len(tokenizer.encode(text, add_special_tokens=True)),
                 "length_control": False,
                 "text": text,
             }
@@ -170,9 +163,7 @@ def main() -> None:
         "source_tokenizer_revision": args.source_revision,
         "sha256": digest,
         "records": len(records),
-        "required_content_token_lengths": payload[
-            "required_content_token_lengths"
-        ],
+        "required_content_token_lengths": payload["required_content_token_lengths"],
         "special_tokens_per_record": special_tokens_per_record,
         "family_counts": family_counts,
         "padding_control_ids": payload["padding_control_ids"],

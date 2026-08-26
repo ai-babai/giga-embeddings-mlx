@@ -24,9 +24,7 @@ def read_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text().splitlines() if line]
 
 
-def encode_texts(
-    model, texts: list[str], batch_size: int, max_length: int
-) -> np.ndarray:
+def encode_texts(model, texts: list[str], batch_size: int, max_length: int) -> np.ndarray:
     values = []
     for start in range(0, len(texts), batch_size):
         batch = model.encode(texts[start : start + batch_size], max_length=max_length)
@@ -126,20 +124,14 @@ def retrieval_effectiveness(
             if doc_id in document_index
         }
         order = np.argsort(-scores[row_index])
-        ranks = [
-            rank
-            for rank, doc_index in enumerate(order, start=1)
-            if doc_index in relevant
-        ]
+        ranks = [rank for rank, doc_index in enumerate(order, start=1) if doc_index in relevant]
         reciprocal_ranks.append(1.0 / min(ranks) if ranks else 0.0)
         dcg = sum(
             1.0 / np.log2(rank + 1)
             for rank, doc_index in enumerate(order[:10], start=1)
             if doc_index in relevant
         )
-        ideal = sum(
-            1.0 / np.log2(rank + 1) for rank in range(1, min(len(relevant), 10) + 1)
-        )
+        ideal = sum(1.0 / np.log2(rank + 1) for rank in range(1, min(len(relevant), 10) + 1))
         ndcg10.append(dcg / ideal if ideal else 0.0)
     return {
         "mrr": float(np.mean(reciprocal_ranks)),
@@ -158,18 +150,13 @@ def ranking_metrics(
     base_top10 = np.argsort(-base_scores, axis=1)[:, :10]
     candidate_top10 = np.argsort(-candidate_scores, axis=1)[:, :10]
     overlap = [
-        len(set(left).intersection(right)) / 10
-        for left, right in zip(base_top10, candidate_top10)
+        len(set(left).intersection(right)) / 10 for left, right in zip(base_top10, candidate_top10)
     ]
     base_effectiveness = retrieval_effectiveness(base_scores, queries, documents)
-    candidate_effectiveness = retrieval_effectiveness(
-        candidate_scores, queries, documents
-    )
+    candidate_effectiveness = retrieval_effectiveness(candidate_scores, queries, documents)
     return {
         "top1_agreement": float(
-            np.mean(
-                np.argmax(base_scores, axis=1) == np.argmax(candidate_scores, axis=1)
-            )
+            np.mean(np.argmax(base_scores, axis=1) == np.argmax(candidate_scores, axis=1))
         ),
         "mean_top10_overlap": float(np.mean(overlap)),
         "min_top10_overlap": float(np.min(overlap)),
@@ -203,9 +190,7 @@ def ranking_comparison(
     per_family = {}
     for family in INSTRUCTIONS:
         query_indices = [i for i, row in enumerate(queries) if row["family"] == family]
-        document_indices = [
-            i for i, row in enumerate(documents) if row["family"] == family
-        ]
+        document_indices = [i for i, row in enumerate(documents) if row["family"] == family]
         family_queries = [queries[i] for i in query_indices]
         family_documents = [documents[i] for i in document_indices]
         per_family[family] = ranking_metrics(
@@ -235,15 +220,9 @@ def compare(
     return {
         "min_aligned_cosine": float(aligned_cosine.min()),
         "mean_aligned_cosine": float(aligned_cosine.mean()),
-        "similarity_spearman": float(
-            spearmanr(base_pairwise, candidate_pairwise).statistic
-        ),
-        "similarity_rmse": float(
-            np.sqrt(np.mean((base_pairwise - candidate_pairwise) ** 2))
-        ),
-        "max_abs_similarity_delta": float(
-            np.max(np.abs(base_pairwise - candidate_pairwise))
-        ),
+        "similarity_spearman": float(spearmanr(base_pairwise, candidate_pairwise).statistic),
+        "similarity_rmse": float(np.sqrt(np.mean((base_pairwise - candidate_pairwise) ** 2))),
+        "max_abs_similarity_delta": float(np.max(np.abs(base_pairwise - candidate_pairwise))),
         **ranking_results,
     }
 

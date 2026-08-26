@@ -53,10 +53,7 @@ def encode_reference(
             chunks.append(F.normalize(pooled, dim=-1).float().cpu().numpy())
             del encoded, hidden, mask, pooled
             completed_batches = start // batch_size + 1
-            if (
-                completed_batches % progress_interval == 0
-                or completed_batches == total_batches
-            ):
+            if completed_batches % progress_interval == 0 or completed_batches == total_batches:
                 elapsed = time.monotonic() - started_at
                 rate = completed_batches / elapsed
                 remaining = (total_batches - completed_batches) / rate
@@ -184,9 +181,7 @@ def main() -> None:
                 f"Reference {section} shape {reference[section].shape} != {expected_shape}"
             )
         if mlx_values[section].shape != expected_shape:
-            raise ValueError(
-                f"MLX {section} shape {mlx_values[section].shape} != {expected_shape}"
-            )
+            raise ValueError(f"MLX {section} shape {mlx_values[section].shape} != {expected_shape}")
 
     report = {
         "model": args.model,

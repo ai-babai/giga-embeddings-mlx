@@ -66,10 +66,7 @@ def effectiveness(order: np.ndarray, queries: list[dict], documents: list[dict])
             for rank, doc in enumerate(order[row_index, :10], 1)
             if doc in relevant
         )
-        ideal = sum(
-            1.0 / np.log2(rank + 1)
-            for rank in range(1, min(len(relevant), 10) + 1)
-        )
+        ideal = sum(1.0 / np.log2(rank + 1) for rank in range(1, min(len(relevant), 10) + 1))
         ndcg10.append(dcg / ideal if ideal else 0.0)
     return float(np.mean(reciprocal_ranks)), float(np.mean(ndcg10))
 
@@ -156,9 +153,7 @@ def main() -> None:
     if args.calibration_cache.exists():
         calibration = np.load(args.calibration_cache)
     else:
-        calibration = encode_calibration(
-            args.model_path, calibration_rows, args.batch_size
-        )
+        calibration = encode_calibration(args.model_path, calibration_rows, args.batch_size)
         args.calibration_cache.parent.mkdir(parents=True, exist_ok=True)
         np.save(args.calibration_cache, calibration)
 
@@ -185,9 +180,7 @@ def main() -> None:
         "clip_fraction": clipped / total_values,
         "storage_reduction_vs_fp32": 0.75,
         **ranking_report(base_scores, uint8_scores, queries, documents),
-        "numpy_search_latency": timed(
-            lambda: compressed["queries"] @ compressed["documents"].T
-        ),
+        "numpy_search_latency": timed(lambda: compressed["queries"] @ compressed["documents"].T),
     }
 
     binary_scores = packed_binary_scores(original["queries"], original["documents"])
@@ -203,9 +196,7 @@ def main() -> None:
         "direct": direct_binary,
         "rescored": rescored_binary,
         "packed_hamming_search_latency": timed(
-            lambda: packed_binary_scores(
-                original["queries"], original["documents"]
-            )
+            lambda: packed_binary_scores(original["queries"], original["documents"])
         ),
         "packed_hamming_plus_rescore_latency": timed(
             lambda: binary_rescore_scores(
@@ -221,9 +212,7 @@ def main() -> None:
     report = {
         "model": args.model,
         "dimension": dimension,
-        "calibration_manifest": json.loads(
-            (args.calibration / "manifest.json").read_text()
-        ),
+        "calibration_manifest": json.loads((args.calibration / "manifest.json").read_text()),
         "uint8": uint8_metrics,
         "binary": binary_metrics,
         "bytes_per_vector": {
@@ -231,9 +220,7 @@ def main() -> None:
             "uint8": dimension,
             "binary": (dimension + 7) // 8,
         },
-        "fp32_numpy_search_latency": timed(
-            lambda: original["queries"] @ original["documents"].T
-        ),
+        "fp32_numpy_search_latency": timed(lambda: original["queries"] @ original["documents"].T),
     }
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))

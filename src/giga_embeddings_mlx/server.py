@@ -7,6 +7,7 @@ from typing import Literal
 import mlx.core as mx
 
 from .loading import EmbeddingModel, load_embedding_model
+from .prompting import format_query
 
 
 def _float32_base64(values: list[float]) -> str:
@@ -14,7 +15,15 @@ def _float32_base64(values: list[float]) -> str:
     return base64.b64encode(raw).decode("ascii")
 
 
-def create_app(model_path: str, *, served_model_name: str | None = None):
+def create_app(
+    model_source: str = "default",
+    *,
+    served_model_name: str | None = None,
+    revision: str | None = None,
+    cache_dir: str | None = None,
+    local_files_only: bool = False,
+    skip_memory_check: bool = False,
+):
     """Create a local OpenAI-compatible embeddings application.
 
     FastAPI is imported lazily so the core runtime does not require server
@@ -26,11 +35,18 @@ def create_app(model_path: str, *, served_model_name: str | None = None):
         from pydantic import BaseModel, ConfigDict
     except ImportError as exc:
         raise RuntimeError(
-            'Server dependencies are missing; install with `uv sync --extra server`.'
+            "Server dependencies are missing; install with "
+            "`pip install 'giga-embeddings-mlx[server]'`."
         ) from exc
 
-    loaded: EmbeddingModel = load_embedding_model(model_path)
-    public_name = served_model_name or model_path
+    loaded: EmbeddingModel = load_embedding_model(
+        model_source,
+        revision=revision,
+        cache_dir=cache_dir,
+        local_files_only=local_files_only,
+        skip_memory_check=skip_memory_check,
+    )
+    public_name = served_model_name or model_source
     inference_lock = threading.Lock()
 
     class EmbeddingsRequest(BaseModel):
@@ -41,6 +57,7 @@ def create_app(model_path: str, *, served_model_name: str | None = None):
         encoding_format: Literal["float", "base64"] = "float"
         dimensions: int | None = None
         user: str | None = None
+        instruction: str | None = None
 
     app = FastAPI(title="Giga Embeddings MLX", version="0.1.0")
 
@@ -68,9 +85,13 @@ def create_app(model_path: str, *, served_model_name: str | None = None):
         # One model owns one Metal execution path. Serializing requests avoids
         # interleaved allocator state and gives predictable local behavior.
         with inference_lock:
-            tokenized = loaded.tokenizer(texts, add_special_tokens=True)
+            if request.instruction:
+                prepared_texts = [format_query(request.instruction, text) for text in texts]
+            else:
+                prepared_texts = texts
+            tokenized = loaded.tokenizer(prepared_texts, add_special_tokens=True)
             prompt_tokens = sum(len(ids) for ids in tokenized["input_ids"])
-            vectors = loaded.encode(texts).astype(mx.float32).tolist()
+            vectors = loaded.encode(prepared_texts).astype(mx.float32).tolist()
         if request.encoding_format == "base64":
             payload = [_float32_base64(vector) for vector in vectors]
         else:

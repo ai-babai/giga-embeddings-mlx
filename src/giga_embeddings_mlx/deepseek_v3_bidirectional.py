@@ -48,21 +48,15 @@ class DeepseekV3BidirectionalModel(deepseek_v3.DeepseekV3Model):
         if attention.q_lora_rank is None:
             q = attention.q_proj(x)
         else:
-            q = attention.q_b_proj(
-                attention.q_a_layernorm(attention.q_a_proj(x))
-            )
-        q = q.reshape(
-            batch, length, attention.num_heads, attention.q_head_dim
-        ).transpose(0, 2, 1, 3)
+            q = attention.q_b_proj(attention.q_a_layernorm(attention.q_a_proj(x)))
+        q = q.reshape(batch, length, attention.num_heads, attention.q_head_dim).transpose(
+            0, 2, 1, 3
+        )
         q_nope, q_pe = mx.split(q, [attention.qk_nope_head_dim], axis=-1)
 
         compressed_kv = attention.kv_a_proj_with_mqa(x)
-        compressed_kv, k_pe = mx.split(
-            compressed_kv, [attention.kv_lora_rank], axis=-1
-        )
-        k_pe = k_pe.reshape(
-            batch, length, 1, attention.qk_rope_head_dim
-        ).transpose(0, 2, 1, 3)
+        compressed_kv, k_pe = mx.split(compressed_kv, [attention.kv_lora_rank], axis=-1)
+        k_pe = k_pe.reshape(batch, length, 1, attention.qk_rope_head_dim).transpose(0, 2, 1, 3)
         kv_latent = attention.kv_a_layernorm(compressed_kv)[:, None, :, :]
         q_pe = attention.rope(q_pe, 0)
         k_pe = attention.rope(k_pe, 0)
@@ -110,9 +104,7 @@ class DeepseekV3BidirectionalModel(deepseek_v3.DeepseekV3Model):
                 layer.self_attn, layer.input_layernorm(hidden), mask
             )
             residual = hidden + attention_out
-            hidden = residual + layer.mlp(
-                layer.post_attention_layernorm(residual)
-            )
+            hidden = residual + layer.mlp(layer.post_attention_layernorm(residual))
 
         return self.norm(hidden)
 
@@ -142,13 +134,9 @@ class DeepseekV3BidirectionalModel(deepseek_v3.DeepseekV3Model):
                 # return an unspecified order. Sort only the diagnostic trace
                 # by actual routing weight so "top-1" has stable semantics.
                 trace_order = mx.argsort(-scores, axis=-1)
-                router_indices.append(
-                    mx.take_along_axis(indices, trace_order, axis=-1)
-                )
+                router_indices.append(mx.take_along_axis(indices, trace_order, axis=-1))
                 mlp_out = layer.mlp.switch_mlp(mlp_input, indices)
-                mlp_out = (mlp_out * scores[..., None]).sum(axis=-2).astype(
-                    mlp_out.dtype
-                )
+                mlp_out = (mlp_out * scores[..., None]).sum(axis=-2).astype(mlp_out.dtype)
                 if layer.mlp.config.n_shared_experts is not None:
                     mlp_out = mlp_out + layer.mlp.shared_experts(mlp_input)
             else:
@@ -177,9 +165,7 @@ class DeepseekV3BidirectionalModel(deepseek_v3.DeepseekV3Model):
                 layer.self_attn, layer.input_layernorm(hidden), mask
             )
             residual = hidden + attention_out
-            hidden = residual + layer.mlp(
-                layer.post_attention_layernorm(residual)
-            )
+            hidden = residual + layer.mlp(layer.post_attention_layernorm(residual))
             if index in layer_indices:
                 selected[index] = hidden
         return self.norm(hidden), selected
@@ -210,7 +196,5 @@ def get_model_classes(
     config: dict,
 ) -> tuple[type[nn.Module], type[deepseek_v3.ModelArgs]]:
     if config.get("model_type") != "deepseek_v3_bidirec":
-        raise ValueError(
-            f"Unsupported DeepSeek embedding model type: {config.get('model_type')!r}"
-        )
+        raise ValueError(f"Unsupported DeepSeek embedding model type: {config.get('model_type')!r}")
     return Model, ModelArgs

@@ -9,7 +9,18 @@ description = "Native MLX runtime for the Giga Embeddings 0826 model family"
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Maksim Popkov" }]
+maintainers = [{ name = "Maksim Popkov" }]
+keywords = ["embeddings", "giga-embeddings", "mlx", "apple-silicon"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: MacOS :: MacOS X",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
   "huggingface-hub>=1.3,<2",
   "mlx>=0.32.2,<0.33",
@@ -32,6 +43,22 @@ server = [
   "fastapi>=0.140,<1",
   "uvicorn>=0.52,<1",
 ]
+dev = [
+  "build>=1.3,<2",
+  "pytest>=8.4,<9",
+  "ruff>=0.12,<1",
+  "twine>=7,<8",
+]
+
+[project.urls]
+Homepage = "https://github.com/ai-babai/giga-embeddings-mlx"
+Repository = "https://github.com/ai-babai/giga-embeddings-mlx"
+Documentation = "https://github.com/ai-babai/giga-embeddings-mlx#readme"
+Issues = "https://github.com/ai-babai/giga-embeddings-mlx/issues"
+Changelog = "https://github.com/ai-babai/giga-embeddings-mlx/blob/main/CHANGELOG.md"
+"Upstream 480M Model" = "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826"
+"Upstream 3B Model" = "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-3B-0826"
+"Upstream 10B Model" = "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826"
 
 [project.scripts]
 giga-embeddings-mlx = "giga_embeddings_mlx.cli:main"
@@ -42,3 +69,9 @@ path = "src/giga_embeddings_mlx/_version.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/giga_embeddings_mlx"]
 
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

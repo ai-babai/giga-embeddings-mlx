@@ -91,9 +91,7 @@ def top1_audit(report: dict, queries: list[dict], documents: list[dict]) -> list
     computed_agreement = 1.0 - len(changed) / len(queries)
     reported_agreement = report["metrics"]["ranking"]["top1_agreement"]
     if not math.isclose(computed_agreement, reported_agreement, abs_tol=1e-12):
-        raise ValueError(
-            f"Computed top-1 agreement {computed_agreement} != {reported_agreement}"
-        )
+        raise ValueError(f"Computed top-1 agreement {computed_agreement} != {reported_agreement}")
 
     audit = []
     for query_index in changed:
@@ -186,8 +184,7 @@ def evaluate_profile(
         ),
         metric_check(
             "MLX padding deficit vs PyTorch",
-            padding["reference_single_vs_padded_cosine"]
-            - padding["mlx_single_vs_padded_cosine"],
+            padding["reference_single_vs_padded_cosine"] - padding["mlx_single_vs_padded_cosine"],
             "<=",
             thresholds["mlx_padding_deficit"],
         ),
@@ -221,9 +218,7 @@ def evaluate_profile(
     hidden_diagnostic = [
         {
             "layer_index": row["layer_index"],
-            "global_valid_tokens_flattened_cosine": row[
-                "global_valid_tokens_flattened_cosine"
-            ],
+            "global_valid_tokens_flattened_cosine": row["global_valid_tokens_flattened_cosine"],
             "min_per_text_flattened_cosine": row["min_per_text_flattened_cosine"],
             "max_abs_hidden_delta": row["max_abs_hidden_delta"],
         }
