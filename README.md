@@ -76,6 +76,12 @@ giga-embeddings-mlx encode "Где находится Москва?" \
 | `10b-a1.8b-bf16` | upstream BF16 MoE | 1536 | quality-first, high capacity | 21.0 GB |
 | `10b-a1.8b-q8` | Q8, BF16 routers/norms, group 64 | 1536 | compact / research | 11.1 GB |
 
+Quant repositories:
+[480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64),
+[3B balanced](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64),
+and
+[10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64).
+
 The BF16 aliases point to immutable upstream commits; weights are not
 duplicated under `ai-babai`. Q8 aliases point to the immutable `0826-v0.1.0`
 release tag in their dedicated repositories.

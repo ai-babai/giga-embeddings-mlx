@@ -75,6 +75,12 @@ giga-embeddings-mlx encode "Где находится Москва?" \
 | `10b-a1.8b-bf16` | upstream BF16 MoE | 1536 | quality-first при большом запасе памяти | 21,0 GB |
 | `10b-a1.8b-q8` | Q8, routers/norms BF16, group 64 | 1536 | compact / research | 11,1 GB |
 
+Репозитории квантованных моделей:
+[480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64),
+[3B balanced](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64)
+и
+[10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64).
+
 BF16-алиасы указывают на неизменяемые upstream-коммиты; веса не дублируются в
 `ai-babai`. Q8-алиасы указывают на неизменяемый release tag `0826-v0.1.0` в
 отдельных repositories.

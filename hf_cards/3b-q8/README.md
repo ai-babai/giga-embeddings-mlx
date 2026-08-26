@@ -30,6 +30,9 @@ official `ai-sage` release.
 
 ## Use
 
+Install the
+[`giga-embeddings-mlx` package](https://pypi.org/project/giga-embeddings-mlx/):
+
 ```bash
 python -m pip install giga-embeddings-mlx
 ```

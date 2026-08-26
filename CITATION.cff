@@ -19,10 +19,16 @@ keywords:
 references:
   - type: generic
     title: "Giga-Embeddings-instruct-480M-0826"
+    authors:
+      - name: ai-sage
     url: "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826"
   - type: generic
     title: "Giga-Embeddings-instruct-3B-0826"
+    authors:
+      - name: ai-sage
     url: "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-3B-0826"
   - type: generic
     title: "Giga-Embeddings-instruct-10B-A1.8B-0826"
+    authors:
+      - name: ai-sage
     url: "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826"
