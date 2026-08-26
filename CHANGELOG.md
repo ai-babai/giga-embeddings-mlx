@@ -3,6 +3,24 @@
 All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and releases use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-08-26
+
+### Changed
+
+- Reworked the GitHub and PyPI landing page around local semantic search, RAG,
+  direct links to the released MLX models, and plain-language model selection.
+- Added the original Giga-Embeddings paper and official MTEB quality results,
+  clearly separated from the local MLX backend and Q8 preservation checks.
+- Added a deterministic, accessible model-choice graphic and human-readable
+  speed and memory labels.
+- Updated all English and Russian Hugging Face model cards and narrowed the MLX
+  Collection to the three released `ai-babai` artifacts.
+
+### Unchanged
+
+- Runtime behavior, model registry, quantization policies, tensor bytes, and
+  immutable model-weight revisions are unchanged from `0.1.0`.
+
 ## [0.1.0] - 2026-08-26
 
 ### Added
@@ -27,4 +45,5 @@ and releases use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Q4, Q6, uniform 3B Q8, and dominated experimental policies.
 - Automatic embedding-dimension truncation or output-vector compression.
 
+[0.1.1]: https://github.com/ai-babai/giga-embeddings-mlx/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ai-babai/giga-embeddings-mlx/releases/tag/v0.1.0

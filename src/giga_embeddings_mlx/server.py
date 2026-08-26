@@ -59,7 +59,7 @@ def create_app(
         user: str | None = None
         instruction: str | None = None
 
-    app = FastAPI(title="Giga Embeddings MLX", version="0.1.0")
+    app = FastAPI(title="Giga Embeddings MLX", version="0.1.1")
 
     @app.get("/health")
     def health() -> dict[str, str]:

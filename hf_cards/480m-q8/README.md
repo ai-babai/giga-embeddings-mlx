@@ -9,29 +9,57 @@ base_model: ai-sage/Giga-Embeddings-instruct-480M-0826
 base_model_relation: quantized
 tags:
   - mlx
-  - embeddings
   - apple-silicon
+  - embeddings
+  - text-embeddings
+  - semantic-search
+  - rag
+  - russian
+  - local-ai
+  - macos
+  - quantized
   - q8
+  - arxiv:2608.23806
 inference: false
 ---
 
-# Giga Embeddings 0826 480M — MLX Q8 g64
+# Giga Embeddings 0826 480M — MLX Q8 for Apple Silicon
 
-[Русская карточка](README.ru.md)
+[Русская карточка](README.ru.md) ·
+[All MLX models](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
+[GitHub](https://github.com/ai-babai/giga-embeddings-mlx) ·
+[PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
+[Original paper](https://arxiv.org/abs/2608.23806)
 
-[Giga Embeddings 0826 MLX Collection](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244)
+![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.1)
 
-Compact native-MLX quantization of
-[`ai-sage/Giga-Embeddings-instruct-480M-0826`](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826)
-for Apple Silicon. This is an independent `ai-babai` artifact, not an official
-`ai-sage` release. Normal inference uses
-[`giga-embeddings-mlx`](https://github.com/ai-babai/giga-embeddings-mlx) and
-does not execute checkpoint Python.
+The compact choice for local Russian and English semantic search, RAG, text
+similarity, clustering, and classification on Apple Silicon. It is the smallest
+released Giga Embeddings `0826` MLX model: a 0.525 GB download that used 1.339 GB
+of peak Metal memory in our 16-text test.
+
+## Quality and size at a glance
+
+- **Original model quality:** 70.98 Russian MTEB in the authors'
+  [paper](https://arxiv.org/html/2608.23806#S4).
+- **Our Q8 preservation check:** aggregate NDCG@10 change `+0.00289` versus the
+  native MLX BF16 model—no measured aggregate regression on the frozen set.
+- **Typical time for one 512-token text:** 0.071 s on an M4 Pro.
+- **Batch speed:** 6.38 documents/s for 16 texts of 1024 tokens each.
+
+The official MTEB result belongs to the original BF16 model. We did not rerun
+the complete MTEB suite on Q8; our local test separately checks whether the MLX
+port and quantization preserve retrieval behavior.
+
+## Choose a released MLX model
+
+| Model | Best for | Download | Original Russian MTEB | Our Q8 retrieval check |
+|---|---|---:|---:|---:|
+| [3B Q8 + BF16 edges](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64) | recommended default | 3.755 GB | 74.56 | NDCG@10 Δ +0.00181 |
+| **[480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64)** | **smallest and fastest** | **0.525 GB** | **70.98** | **NDCG@10 Δ +0.00289** |
+| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64) | research; code warning | 11.144 GB | 74.98 | aggregate Δ −0.00046 |
 
 ## Use
-
-Install the
-[`giga-embeddings-mlx` package](https://pypi.org/project/giga-embeddings-mlx/):
 
 ```bash
 python -m pip install giga-embeddings-mlx
@@ -46,35 +74,36 @@ queries = model.encode_queries(
     ["Где находится Москва?"],
     instruction="Given a question, retrieve passages that answer the question",
 )
+scores = queries @ documents.T
 ```
 
-Queries require an explicit instruction. Documents have no prefix. Embeddings
-use padding-aware FP32 mean pooling and FP32 L2 normalization.
+Queries require an explicit instruction; documents have no prefix. Normal
+inference does not execute Python code from this model repository.
 
-## Artifact and measurements
+## What is inside
 
-- Quantization: direct from BF16, affine Q8, group size 64.
-- Role: compact; not the default.
+- Direct affine Q8 quantization from BF16, group size 64.
 - Embedding dimension: 1024; maximum sequence length: 8192.
-- Artifact: 0.525 GB; Metal peak at B16×1024: 1.339 GB.
-- M4 Pro 48 GB, B1×512: 0.071 s median / 0.072 s p95.
-- M4 Pro 48 GB, B16×1024: 6.38 documents/s and 6530 tokens/s.
-- Frozen holdout versus native MLX BF16: min/mean vector cosine
-  0.992867/0.998627, top-1 agreement 98.44%, mean top-10 overlap 96.72%,
-  NDCG@10 delta +0.00289.
+- Artifact size: 0.525 GB.
+- Peak Metal memory: 1.339 GB for 16 texts of 1024 tokens.
+- Min/mean vector cosine versus native MLX BF16: 0.992867 / 0.998627.
+- Top-1 agreement: 98.44%; mean top-10 overlap: 96.72%.
 
-Small positive deltas mean no measured regression in this lane; they are not a
-claim that quantization improves the model. Full methodology, p95, downstream
-results, source hashes and historical revision 1/2 failures are in the
-[`0826` report](https://github.com/ai-babai/giga-embeddings-mlx/blob/main/docs/benchmarks/0826-results.md).
+Small positive deltas are evidence of no measured regression, not a claim that
+quantization improves the original model. Full methodology, downstream results,
+hardware details, and evidence hashes are in the
+[`0826` MLX report](https://github.com/ai-babai/giga-embeddings-mlx/blob/main/docs/benchmarks/0826-results.md).
 
-## Provenance
+## Source and reproducibility
 
+- Original model: [`ai-sage/Giga-Embeddings-instruct-480M-0826`](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826).
+- Original paper: [arXiv:2608.23806](https://arxiv.org/abs/2608.23806).
 - Base revision: `2d0c1a92716eef0e5b6972df85b5883eb5b4f57a`.
-- Release tag: `0826-v0.1.0`.
+- Weight release: `0826-v0.1.0`; tensor bytes are unchanged in the `0.1.1`
+  documentation update.
 - Converter commit: `dfbc6a375ccdb637d1932529acbcfbf4db5025b6`.
-- `manifest.json` records the portable file inventory and SHA-256 hashes.
-- Model repository Python files and `auto_map` were intentionally omitted.
+- `manifest.json` records the portable inventory and SHA-256 hashes.
 
-Tested on Apple Silicon/macOS. Q8 is primarily a disk/capacity trade-off and
-is not guaranteed to be faster than BF16.
+Tested on Apple Silicon/macOS. Q8 is primarily a memory and disk optimization,
+not a guaranteed speed-up over BF16. This is an independent `ai-babai`
+quantization, not an official `ai-sage` release.

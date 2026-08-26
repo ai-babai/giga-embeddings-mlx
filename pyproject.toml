@@ -5,14 +5,24 @@ build-backend = "hatchling.build"
 [project]
 name = "giga-embeddings-mlx"
 dynamic = ["version"]
-description = "Native MLX runtime for the Giga Embeddings 0826 model family"
+description = "Local Russian and English text embeddings on Apple Silicon with native MLX and tested Q8 models"
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Maksim Popkov" }]
 maintainers = [{ name = "Maksim Popkov" }]
-keywords = ["embeddings", "giga-embeddings", "mlx", "apple-silicon"]
+keywords = [
+  "apple-silicon",
+  "embeddings",
+  "giga-embeddings",
+  "local-ai",
+  "mlx",
+  "quantization",
+  "rag",
+  "russian",
+  "semantic-search",
+]
 classifiers = [
   "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT License",
@@ -59,6 +69,7 @@ Documentation = "https://github.com/ai-babai/giga-embeddings-mlx#readme"
 Issues = "https://github.com/ai-babai/giga-embeddings-mlx/issues"
 Changelog = "https://github.com/ai-babai/giga-embeddings-mlx/blob/main/CHANGELOG.md"
 "Hugging Face Collection" = "https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244"
+Paper = "https://arxiv.org/abs/2608.23806"
 "Upstream 480M Model" = "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826"
 "Upstream 3B Model" = "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-3B-0826"
 "Upstream 10B Model" = "https://huggingface.co/ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826"

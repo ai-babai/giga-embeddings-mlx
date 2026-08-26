@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: Popkov
     given-names: Maksim
-version: 0.1.0
+version: 0.1.1
 date-released: 2026-08-26
 license: MIT
 repository-code: "https://github.com/ai-babai/giga-embeddings-mlx"
@@ -17,6 +17,19 @@ keywords:
   - MLX
   - quantization
 references:
+  - type: article
+    title: "Giga-Embeddings: Mixture-of-Experts Encoders for High-Throughput Text Embeddings"
+    authors:
+      - family-names: Kolodin
+        given-names: Egor
+      - family-names: Krasnoperov
+        given-names: Egor
+      - family-names: Kosarev
+        given-names: Evgeniy
+      - family-names: Minkin
+        given-names: Fyodor
+    year: 2026
+    url: "https://arxiv.org/abs/2608.23806"
   - type: generic
     title: "Giga-Embeddings-instruct-480M-0826"
     authors:

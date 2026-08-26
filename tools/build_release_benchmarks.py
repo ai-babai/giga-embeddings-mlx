@@ -225,6 +225,12 @@ def render_markdown(payload: dict[str, Any]) -> str:
         "",
         "## Disk, memory, load and speed",
         "",
+        (
+            "Protocol shorthand used in this technical table: `B1×512` means one text "
+            "of up to 512 tokens; `B16×1024` means 16 texts of 1024 tokens each. "
+            "`Metal peak` is the maximum Metal allocation observed during that test."
+        ),
+        "",
         "| Alias | Role | Artifact (GB) ↓ | Process max RSS (GB) ↓ | Metal peak B16×1024 (GB) ↓ | Load first / warm (s) ↓ | B1×512 median / p95 (s) ↓ | B16×1024 docs/s ↑ | B16×1024 tok/s ↑ |",
         "|---|---|---:|---:|---:|---:|---:|---:|---:|",
     ]

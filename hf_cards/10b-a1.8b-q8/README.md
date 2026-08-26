@@ -9,33 +9,63 @@ base_model: ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826
 base_model_relation: quantized
 tags:
   - mlx
-  - embeddings
   - apple-silicon
+  - embeddings
+  - text-embeddings
+  - semantic-search
+  - rag
+  - russian
+  - local-ai
+  - macos
+  - quantized
   - moe
   - q8
   - research
+  - arxiv:2608.23806
 inference: false
 ---
 
-# Giga Embeddings 0826 10B-A1.8B — MLX Q8 g64
+# Giga Embeddings 0826 10B-A1.8B — MLX Q8 research model
 
-[Русская карточка](README.ru.md)
+[Русская карточка](README.ru.md) ·
+[All MLX models](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
+[GitHub](https://github.com/ai-babai/giga-embeddings-mlx) ·
+[PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
+[Original paper](https://arxiv.org/abs/2608.23806)
 
-[Giga Embeddings 0826 MLX Collection](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244)
+![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.1)
 
-> **Compact/research artifact with a code-retrieval warning.** Aggregate
-> retrieval passed, but code-family NDCG@10 changed by `−0.01297` versus native
-> MLX BF16. This model is not the default and is not claimed to be near-lossless.
+> **Research model with a code-search warning.** Overall retrieval quality
+> passed our acceptance gate, but code-search NDCG@10 changed by `−0.01297`
+> versus native MLX BF16. Use the 3B model by default unless this trade-off has
+> been evaluated on your own data.
 
-Native-MLX quantization of
-[`ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826`](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826)
-for Apple Silicon. It keeps MoE routers and normalization weights in BF16. This
-is an independent `ai-babai` artifact, not an official `ai-sage` release.
+This is the high-capacity sparse Mixture-of-Experts option for local Russian
+and English semantic search, RAG, text similarity, clustering, and
+classification on Apple Silicon. The Q8 artifact keeps MoE routers and
+normalization weights in BF16.
+
+## Quality and size at a glance
+
+- **Original model quality:** 74.98 Russian MTEB—the best result in the Giga
+  Embeddings family—in the authors' [paper](https://arxiv.org/html/2608.23806#S4).
+- **Our aggregate Q8 check:** NDCG@10 change `−0.00046` versus native MLX BF16.
+- **Code-search check:** NDCG@10 change `−0.01297`; top-1 agreement 92.19%.
+- **Download:** 11.144 GB; **peak Metal memory:** 14.423 GB in the 16-text test.
+
+The official MTEB result belongs to the original BF16 model. We did not rerun
+the complete MTEB suite on Q8; our local test separately checks whether the MLX
+port and quantization preserve retrieval behavior.
+
+## Choose a released MLX model
+
+| Model | Best for | Download | Original Russian MTEB | Our Q8 retrieval check |
+|---|---|---:|---:|---:|
+| [3B Q8 + BF16 edges](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64) | recommended default | 3.755 GB | 74.56 | NDCG@10 Δ +0.00181 |
+| [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64) | smallest and fastest | 0.525 GB | 70.98 | NDCG@10 Δ +0.00289 |
+| **[10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64)** | **research; code warning** | **11.144 GB** | **74.98** | **aggregate Δ −0.00046** |
 
 ## Use
-
-Install the
-[`giga-embeddings-mlx` package](https://pypi.org/project/giga-embeddings-mlx/):
 
 ```bash
 python -m pip install giga-embeddings-mlx
@@ -50,37 +80,39 @@ queries = model.encode_queries(
     ["Где находится Москва?"],
     instruction="Given a question, retrieve passages that answer the question",
 )
+scores = queries @ documents.T
 ```
 
 Queries require an explicit instruction; documents have no prefix. Normal
-inference uses [`giga-embeddings-mlx`](https://github.com/ai-babai/giga-embeddings-mlx)
-and does not execute checkpoint Python.
+inference does not execute Python code from this model repository.
 
-## Artifact and measurements
+## What is inside
 
-- Quantization: direct from BF16, affine Q8 eligible weights, BF16 routers and
-  norms, group size 64.
-- Role: compact / research.
+- Affine Q8 for eligible weights; BF16 MoE routers and normalization weights;
+  group size 64.
 - Embedding dimension: 1536; maximum sequence length: 8192.
-- Artifact: 11.144 GB; Metal peak at B16×1024: 14.423 GB.
-- M4 Pro 48 GB, B1×512: 0.597 s median / 0.674 s p95.
-- M4 Pro 48 GB, B16×1024: 0.76 documents/s and 776 tokens/s.
-- Frozen holdout versus native MLX BF16: min/mean cosine
-  0.993838/0.999272, top-1 agreement 97.66%, mean top-10 overlap 98.09%,
-  aggregate NDCG@10 delta −0.00046.
-- Code-family top-1 agreement: 92.19%; code NDCG@10 delta: −0.01297.
-- Downstream delta: RuSTS +0.000350; classification accuracy +0.000541 and
-  macro-F1 +0.000540. Positive deltas are not an improvement claim.
+- Artifact size: 11.144 GB; peak Metal memory: 14.423 GB for 16 long texts.
+- Typical time for one 512-token text: 0.597 s on an M4 Pro.
+- Batch speed: 0.76 documents/s for 16 texts of 1024 tokens each.
+- Min/mean vector cosine versus native MLX BF16: 0.993838 / 0.999272.
+- Top-1 agreement: 97.66%; mean top-10 overlap: 98.09%.
+- RuSTS change: +0.000350; classification accuracy change: +0.000541. These
+  small positive deltas are not improvement claims.
 
-Full methodology, MoE-router gates, speed samples and source hashes are in the
-[`0826` report](https://github.com/ai-babai/giga-embeddings-mlx/blob/main/docs/benchmarks/0826-results.md).
-Q8 reduced disk and Metal peak but was slower than BF16 at the displayed
+Full methodology, MoE-router checks, speed samples, and evidence hashes are in
+the [`0826` MLX report](https://github.com/ai-babai/giga-embeddings-mlx/blob/main/docs/benchmarks/0826-results.md).
+Q8 reduced disk and peak Metal memory, but was slower than BF16 in the displayed
 workloads.
 
-## Provenance
+## Source and reproducibility
 
+- Original model: [`ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826`](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826).
+- Original paper: [arXiv:2608.23806](https://arxiv.org/abs/2608.23806).
 - Base revision: `1cb3ad3374dbf0eb9130546ca38b262de5f60287`.
-- Release tag: `0826-v0.1.0`.
+- Weight release: `0826-v0.1.0`; tensor bytes are unchanged in the `0.1.1`
+  documentation update.
 - Converter commit: `dfbc6a375ccdb637d1932529acbcfbf4db5025b6`.
-- `manifest.json` records the portable file inventory and SHA-256 hashes.
-- Model repository Python files and `auto_map` were intentionally omitted.
+- `manifest.json` records the portable inventory and SHA-256 hashes.
+
+Tested on Apple Silicon/macOS. This is an independent `ai-babai` quantization,
+not an official `ai-sage` release.
