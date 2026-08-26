@@ -105,11 +105,14 @@ cover aligned-vector drift, retrieval ranking, Russian semantic similarity and
 classification, artifact size, load time, warm median/p95 latency, tokens/s,
 documents/s, process RSS, peak Metal allocation, memory pressure, and swap.
 
-The measured BF16 backend drift does not satisfy the deliberately strict
-pre-registered cross-backend gate even though FP32 graph controls match. Full
-holdout, downstream, MoE router, speed/load, and output-vector compression
-lanes are complete. No artifact should be described as accepted or released
-until a new criteria revision is decided explicitly.
+The deliberately strict diagnostic gates from revisions 1/2 remain failed
+because of reproducible BF16 rounding drift even though FP32 graph controls
+match. The approved effectiveness-based revision 3 passes for all three
+profiles: pooled-vector and padding checks plus aggregate and per-family
+RU/EN/code/multilingual MRR/NDCG@10 stay within the registered bounds. BF16
+baselines, `480m-q8-g64`, `3b-q8-edges-bf16-g64`, and
+`10b-a1.8b-q8-g64` are accepted locally. They have not been published and
+must not yet be described as released.
 
 Reproducible commands and the fixed speed matrix are documented in
 [`docs/EVALUATION.md`](docs/EVALUATION.md).

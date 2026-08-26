@@ -22,7 +22,7 @@ def file_sha256(path: Path) -> str:
 def read_json_object(path: Path) -> dict:
     value = json.loads(path.read_text())
     if not isinstance(value, dict):
-        raise ValueError(f"Expected a JSON object: {path}")
+        raise TypeError(f"Expected a JSON object: {path}")
     return value
 
 
@@ -46,6 +46,15 @@ def metric_check(name: str, value: float, operator: str, threshold: float) -> di
         "threshold": threshold,
         "pass": passed,
     }
+
+
+def first_relevant_rank(
+    order: np.ndarray, relevant_ids: set[str], documents: list[dict]
+) -> int | None:
+    for rank, document_index in enumerate(order, start=1):
+        if documents[int(document_index)]["id"] in relevant_ids:
+            return rank
+    return None
 
 
 def top1_audit(report: dict, queries: list[dict], documents: list[dict]) -> list[dict]:
@@ -97,12 +106,6 @@ def top1_audit(report: dict, queries: list[dict], documents: list[dict]) -> list
         base_order = np.argsort(-reference_scores[query_index])
         candidate_order = np.argsort(-candidate_scores[query_index])
 
-        def first_relevant_rank(order: np.ndarray) -> int | None:
-            for rank, document_index in enumerate(order, start=1):
-                if documents[int(document_index)]["id"] in relevant_ids:
-                    return rank
-            return None
-
         audit.append(
             {
                 "query_id": query["id"],
@@ -111,8 +114,12 @@ def top1_audit(report: dict, queries: list[dict], documents: list[dict]) -> list
                 "candidate_top1_document_id": candidate_id,
                 "reference_top1_relevant": base_id in relevant_ids,
                 "candidate_top1_relevant": candidate_id in relevant_ids,
-                "reference_first_relevant_rank": first_relevant_rank(base_order),
-                "candidate_first_relevant_rank": first_relevant_rank(candidate_order),
+                "reference_first_relevant_rank": first_relevant_rank(
+                    base_order, relevant_ids, documents
+                ),
+                "candidate_first_relevant_rank": first_relevant_rank(
+                    candidate_order, relevant_ids, documents
+                ),
                 "reference_margin_between_changed_documents": float(
                     reference_scores[query_index, base_index]
                     - reference_scores[query_index, candidate_index]

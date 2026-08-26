@@ -75,11 +75,13 @@ uv run giga-embeddings-mlx convert 3b /path/to/3b-q4-g64 --bits 4
 peak Metal allocation, pressure и swap. Квантование весов и сжатие выходных
 векторов оцениваются раздельно.
 
-Строгий cross-backend BF16 gate revision 1 не пройден из-за воспроизводимого
-BF16 rounding drift, хотя FP32 graph control совпадает. Full holdout,
-downstream, MoE router, speed/load и output-vector compression lanes завершены.
-До отдельного решения по новой revision ни один артефакт не называется
-accepted или released.
+Строгие диагностические gates revision 1/2 не пройдены из-за воспроизводимого
+BF16 rounding drift, хотя FP32 graph controls совпадают. Согласованная
+effectiveness-based revision 3 прошла для всех трех профилей: pooled-vector и
+padding checks, а также aggregate и каждая RU/EN/code/multilingual family по
+MRR/NDCG@10 находятся в заданных пределах. Локально приняты BF16 baselines,
+`480m-q8-g64`, `3b-q8-edges-bf16-g64` и `10b-a1.8b-q8-g64`. Эти артефакты еще
+не опубликованы и не должны называться released.
 
 Воспроизводимые команды и фиксированная speed-матрица описаны в
 [`docs/EVALUATION.md`](docs/EVALUATION.md).
