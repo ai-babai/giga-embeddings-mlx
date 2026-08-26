@@ -10,9 +10,9 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.nn.functional as F
+from evaluate_holdout import INSTRUCTIONS, compare, ranking_comparison, read_jsonl
 from transformers import AutoModel, AutoTokenizer
 
-from evaluate_holdout import INSTRUCTIONS, compare, ranking_comparison, read_jsonl
 from giga_embeddings_mlx.prompting import format_query
 
 

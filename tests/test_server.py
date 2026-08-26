@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import mlx.core as mx
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from giga_embeddings_mlx import server
 

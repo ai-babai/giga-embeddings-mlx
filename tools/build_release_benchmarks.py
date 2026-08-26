@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 V1 = Path("runs/2026-08-25-giga-embeddings-0826-v1")
 V3 = Path("runs/2026-08-26-giga-embeddings-0826-v3")
 
@@ -207,15 +206,19 @@ def render_markdown(payload: dict[str, Any]) -> str:
     lines = [
         "# Giga Embeddings 0826 MLX — measured results",
         "",
-        "This file is generated from the Goal 001 JSON evidence by "
-        "`tools/build_release_benchmarks.py`. Do not edit measured values by hand.",
+        (
+            "This file is generated from the Goal 001 JSON evidence by "
+            "`tools/build_release_benchmarks.py`. Do not edit measured values by hand."
+        ),
         "",
         "## Measurement context",
         "",
         f"- Machine: {payload['benchmark_environment']['machine']}.",
-        f"- Runtime: Python {payload['benchmark_environment']['python']}, MLX "
-        f"{payload['benchmark_environment']['mlx']}, MLX-LM "
-        f"{payload['benchmark_environment']['mlx_lm']}.",
+        (
+            f"- Runtime: Python {payload['benchmark_environment']['python']}, MLX "
+            f"{payload['benchmark_environment']['mlx']}, MLX-LM "
+            f"{payload['benchmark_environment']['mlx_lm']}."
+        ),
         "- Speed: 2 warmups, 5 measured repetitions; median and p95 are reported.",
         "- Load: first process-materialized and warm reload; OS page cache was not flushed.",
         "- Lower is better for seconds/bytes; higher is better for docs/s, tok/s and quality.",

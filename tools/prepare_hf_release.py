@@ -7,7 +7,6 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-
 CONVERTER_COMMIT = "dfbc6a375ccdb637d1932529acbcfbf4db5025b6"
 RUNTIME_VERSION = "0.1.0"
 RELEASE_TAG = "0826-v0.1.0"

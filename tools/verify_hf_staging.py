@@ -12,7 +12,6 @@ import numpy as np
 
 from giga_embeddings_mlx import load_embedding_model
 
-
 VARIANTS = (
     "480m-q8-g64",
     "3b-q8-edges-bf16-g64",
@@ -20,8 +19,10 @@ VARIANTS = (
 )
 
 SMOKE_TEXTS = [
-    "Instruct: Given a question, retrieve passages that answer the question\n"
-    "Query: Где находится Москва?",
+    (
+        "Instruct: Given a question, retrieve passages that answer the question\n"
+        "Query: Где находится Москва?"
+    ),
     "Москва — столица России.",
 ]
 

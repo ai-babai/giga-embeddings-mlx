@@ -43,9 +43,11 @@ LENGTH_SPECS = [
         "length-code-2048",
         "code",
         2048,
-        "def process_record(record):\n"
-        "    tokens = tokenize(record)\n"
-        "    return normalize(encode(tokens))\n",
+        (
+            "def process_record(record):\n"
+            "    tokens = tokenize(record)\n"
+            "    return normalize(encode(tokens))\n"
+        ),
     ),
 ]
 

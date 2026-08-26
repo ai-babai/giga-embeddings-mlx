@@ -4,8 +4,8 @@ from .models import DEFAULT_PROFILE, MODEL_PROFILES, ModelProfile, get_model_pro
 from .prompting import format_query
 
 __all__ = [
-    "MODEL_PROFILES",
     "DEFAULT_PROFILE",
+    "MODEL_PROFILES",
     "EmbeddingModel",
     "ModelProfile",
     "__version__",
