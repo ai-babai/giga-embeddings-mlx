@@ -8,7 +8,7 @@ by [ai-babai](https://github.com/ai-babai); it is not an official `ai-sage`
 release.
 
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
-[Hugging Face](https://huggingface.co/ai-babai) ·
+[Hugging Face Collection](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
 [Benchmarks](docs/benchmarks/0826-results.md) ·
 [Changelog](CHANGELOG.md)
 
