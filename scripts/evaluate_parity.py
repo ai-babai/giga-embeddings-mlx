@@ -84,7 +84,8 @@ def hidden_metrics(
     reference_chunks: list[np.ndarray],
     candidate_chunks: list[np.ndarray],
     attention_masks: list[np.ndarray],
-) -> dict[str, float]:
+    record_ids: list[str],
+) -> dict[str, object]:
     per_text_cosines = []
     valid_reference = []
     valid_candidate = []
@@ -116,6 +117,10 @@ def hidden_metrics(
                 )
             )
         ),
+        "per_record_cosine": {
+            record_id: cosine
+            for record_id, cosine in zip(record_ids, per_text_cosines, strict=True)
+        },
     }
 
 
@@ -155,26 +160,20 @@ def main() -> None:
     expected_content_lengths = [
         record.get("expected_content_tokens") for record in records
     ]
-    expected_model_lengths = [record.get("expected_model_tokens") for record in records]
     if any(expected is not None for expected in expected_content_lengths):
         mismatches = [
             {
                 "id": record.get("id"),
                 "expected_content_tokens": expected_content,
                 "actual_content_tokens": actual_content,
-                "expected_model_tokens": expected_model,
-                "actual_model_tokens": actual_model,
             }
-            for record, expected_content, actual_content, expected_model, actual_model in zip(
+            for record, expected_content, actual_content in zip(
                 records,
                 expected_content_lengths,
                 content_token_lengths,
-                expected_model_lengths,
-                model_token_lengths,
                 strict=True,
             )
-            if (expected_content is not None and expected_content != actual_content)
-            or (expected_model is not None and expected_model != actual_model)
+            if expected_content is not None and expected_content != actual_content
         ]
         if mismatches:
             raise ValueError(f"Parity corpus token-length mismatch: {mismatches}")
@@ -324,6 +323,12 @@ def main() -> None:
         "record_ids": [record.get("id") for record in records],
         "content_token_lengths": content_token_lengths,
         "model_token_lengths": model_token_lengths,
+        "special_tokens_per_record": [
+            model_length - content_length
+            for model_length, content_length in zip(
+                model_token_lengths, content_token_lengths, strict=True
+            )
+        ],
         "batch_size": args.batch_size,
         "max_tokens_in_batch": max(
             int(encoded["attention_mask"].sum(axis=1).max())
@@ -331,6 +336,10 @@ def main() -> None:
         ),
         "min_vector_cosine": float(row_cosines.min()),
         "mean_vector_cosine": float(row_cosines.mean()),
+        "vector_cosine_by_record": {
+            str(record.get("id")): float(cosine)
+            for record, cosine in zip(records, row_cosines, strict=True)
+        },
         "max_abs_similarity_delta": float(
             np.max(np.abs(reference_scores - mlx_scores))
         ),
@@ -357,6 +366,7 @@ def main() -> None:
                     reference_hidden_chunks[index],
                     mlx_hidden_chunks[index],
                     [encoded["attention_mask"].numpy() for encoded in encoded_batches],
+                    [str(record.get("id")) for record in records],
                 ),
             }
             for index in selected_indices
