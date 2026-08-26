@@ -1,48 +1,57 @@
-# Giga Embeddings MLX
+# Giga Embeddings 0826 для Apple Silicon — MLX
 
 [English version](README.md)
 
-Независимый нативный runtime на
-[MLX](https://github.com/ml-explore/mlx) для семейства Giga Embeddings `0826`
-на Apple Silicon. Проект поддерживает
-[ai-babai](https://github.com/ai-babai); это не официальный выпуск `ai-sage`.
+Локальные приватные текстовые эмбеддинги для семантического поиска, RAG,
+кластеризации, классификации и сравнения текстов на русском и английском языках.
+Проект включает нативный runtime на [MLX](https://github.com/ml-explore/mlx) и
+три проверенные Q8-версии семейства Giga Embeddings `0826`. Для обычного
+инференса не нужны PyTorch, облачный API и Python-код из репозиториев моделей.
 
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
-[Коллекция Hugging Face](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
-[Бенчмарки](docs/benchmarks/0826-results.md) ·
-[История изменений](CHANGELOG.md)
+[MLX-модели](https://huggingface.co/collections/ai-babai/giga-embeddings-0826-mlx-6a8eec40b26f6543f5da3244) ·
+[Оригинальная статья](https://arxiv.org/abs/2608.23806) ·
+[Полный MLX-бенчмарк](docs/benchmarks/0826-results.md) ·
+[Последний релиз](https://github.com/ai-babai/giga-embeddings-mlx/releases/latest)
 
-Runtime поддерживает точные upstream-ревизии
-[480M](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826),
-[3B](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-3B-0826) и
-[10B-A1.8B](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826),
-а также три принятых MLX Q8-артефакта. Используются двунаправленный attention
-по всей последовательности, padding-aware mean pooling в FP32 и L2-нормализация
-в FP32. При обычном inference Python-код из model repositories не исполняется.
+![Какую модель Giga Embeddings 0826 MLX выбрать для Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=0.1.1)
 
-## Установка
+## Зачем нужен этот MLX-порт?
 
-Требования: Mac на Apple Silicon, macOS и Python 3.12 или 3.13.
+- Исходные модели набирают от **70,98 до 74,98 на русском MTEB** в оценке
+  авторов.
+- Наши отдельные тесты проверяют перенос исходных BF16-весов на MLX и измеряют,
+  что меняется после Q8-квантизации. У выпущенных 480M и 3B не обнаружено
+  снижения совокупного качества поиска на замороженном тестовом наборе.
+- Рекомендуемая 3B-модель скачивается в размере 3,76 GB и использовала до
+  5,14 GB Metal-памяти в нашем тесте. Для BF16 это 6,31 GB и 7,69 GB.
+- В комплекте есть Python API, командная строка, offline-кеш и локальный
+  OpenAI-совместимый endpoint `/v1/embeddings`.
+
+Это независимый порт [ai-babai](https://github.com/ai-babai), а не официальный
+релиз `ai-sage`.
+
+## Установка и первый запуск
+
+Нужны Mac с Apple Silicon, macOS и Python 3.12 или 3.13.
 
 ```bash
 python -m pip install giga-embeddings-mlx
 ```
 
-По умолчанию используется `3b-q8` — сбалансированная 3B Q8-модель с крайними
-слоями в BF16. Размер загрузки — примерно 3,8 GB. При первом запуске файлы
-модели скачиваются с Hugging Face.
-
-## Быстрый старт за минуту
-
-Документы кодируются без префикса. Для запроса требуется явная retrieval-
-инструкция; runtime не придумывает её самостоятельно.
+Документы кодируются без префикса. Для поискового запроса нужна явная инструкция:
 
 ```python
 from giga_embeddings_mlx import load_embedding_model
 
 model = load_embedding_model("default")
 
-documents = model.encode_documents(["Москва — столица России.", "Париж — столица Франции."])
+documents = model.encode_documents(
+    [
+        "Москва — столица России.",
+        "Париж — столица Франции.",
+    ]
+)
 queries = model.encode_queries(
     "Где находится Москва?",
     instruction="Given a question, retrieve passages that answer the question",
@@ -52,10 +61,31 @@ scores = queries @ documents.T
 print(scores.tolist())
 ```
 
-Низкоуровневый метод `model.encode(...)` принимает уже подготовленный текст.
-Если важна retrieval-роль, используйте `encode_queries` и `encode_documents`.
+`default` — рекомендуемая 3B Q8-модель. При первом запуске она скачивается с
+Hugging Face, затем используется локальный кеш.
 
-CLI:
+## Какую MLX-модель выбрать
+
+| MLX-модель | Для чего подходит | Русский MTEB исходной модели¹ | Наша проверка Q8² | Размер загрузки | Пиковая память³ |
+|---|---|---:|---:|---:|---:|
+| **[3B Q8 + BF16 edges](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64)** | **рекомендуемая по умолчанию** | **74,56** | **NDCG@10 Δ +0,00181** | **3,755 GB** | **5,137 GB** |
+| [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64) | самая компактная и быстрая | 70,98 | NDCG@10 Δ +0,00289 | 0,525 GB | 1,339 GB |
+| [10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64) | исследовательские задачи с большим запасом качества | 74,98 | совокупная Δ −0,00046 | 11,144 GB | 14,423 GB |
+
+1. Task-macro MTEB из
+   [статьи Giga-Embeddings](https://arxiv.org/html/2608.23806#S4). Это результат
+   исходной BF16-модели; полный MTEB на нашем Q8-артефакте не перезапускался.
+2. Разница между Q8 и нативным MLX BF16 на отдельном замороженном наборе для
+   поиска. Малое положительное значение означает отсутствие измеренного
+   ухудшения, а не улучшение модели от квантизации.
+3. Максимальное выделение Metal-памяти при обработке 16 текстов длиной по 1024
+   токена на M4 Pro с 48 GB объединённой памяти.
+
+10B Q8 прошла совокупный порог, но на поиске по коду NDCG@10 изменился на
+`−0,01297`. Поэтому эта модель помечена как исследовательская и не является
+вариантом по умолчанию.
+
+Выбрать модель можно без запоминания имени репозитория:
 
 ```bash
 giga-embeddings-mlx models
@@ -64,38 +94,76 @@ giga-embeddings-mlx encode "Где находится Москва?" \
   --instruction "Given a question, retrieve passages that answer the question"
 ```
 
-## Выбор профиля
+## Насколько сохраняется исходное качество
 
-| Алиас | Веса | Размерность | Роль | Ожидаемая загрузка |
-|---|---|---:|---|---:|
-| `480m-bf16` | upstream BF16 | 1024 | самый малый quality baseline | 1,0 GB |
-| `480m-q8` | Q8, group 64 | 1024 | compact | 0,5 GB |
-| `3b-bf16` | upstream BF16 | 2048 | quality baseline для 3B | 6,3 GB |
-| `3b-q8` / `default` | Q8 + крайние слои BF16, group 64 | 2048 | balanced default | 3,8 GB |
-| `10b-a1.8b-bf16` | upstream BF16 MoE | 1536 | quality-first при большом запасе памяти | 21,0 GB |
-| `10b-a1.8b-q8` | Q8, routers/norms BF16, group 64 | 1536 | compact / research | 11,1 GB |
+В оригинальной статье приведён task-macro MTEB по 41 английской, 23 русским,
+131 мультиязычной и 12 задачам по коду:
 
-Репозитории квантованных моделей:
-[480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8-g64),
-[3B balanced](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8-edges-bf16-g64)
-и
-[10B-A1.8B Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-10b-a1.8b-mlx-q8-g64).
+| Исходная BF16-модель | Английский | Русский | Мультиязычный | Код |
+|---|---:|---:|---:|---:|
+| 480M | 69,52 | 70,98 | 56,97 | 72,87 |
+| 3B | 71,93 | 74,56 | 63,89 | 76,93 |
+| 10B-A1.8B | **72,23** | **74,98** | **65,64** | **78,41** |
 
-BF16-алиасы указывают на неизменяемые upstream-коммиты; веса не дублируются в
-`ai-babai`. Q8-алиасы также указывают прямо на точные проверенные Hugging Face
-коммиты этого выпуска. Человекочитаемые теги `0826-v0.1.0` обозначают те же
-артефакты, но не требуются runtime для разрешения модели.
+Источник: [Giga-Embeddings: Mixture-of-Experts Encoders for High-Throughput
+Text Embeddings](https://arxiv.org/html/2608.23806#S4). Авторы предупреждают,
+что каждая модель оценивалась один раз, поэтому различия меньше одного пункта
+следует трактовать осторожно.
 
-10B Q8 не является default-вариантом и не позиционируется как near-lossless:
-aggregate retrieval gate пройден, но измеренная разница NDCG@10 для code-family
-составила `−0,01297` относительно native MLX BF16.
+Мы не выдаём Q8-артефакты за новые официальные результаты MTEB. Вместо этого
+проверены два преобразования, от которых зависит порт:
 
-Q4, Q6, uniform 3B Q8 и dominated mixed-варианты намеренно не публикуются.
+| Семейство | Исходный BF16 → MLX BF16 | MLX BF16 → выпущенный Q8 | Худшая измеренная группа Q8 |
+|---|---|---:|---:|
+| 480M | порог качества поиска пройден | NDCG@10 Δ +0,00289 | +0,00000 |
+| 3B | порог качества поиска пройден | NDCG@10 Δ +0,00181 | −0,00048 |
+| 10B-A1.8B | порог качества поиска пройден | совокупная NDCG@10 Δ −0,00046 | код: −0,01297 |
 
-## Явный Hub repository и локальные артефакты
+Эта цепочка подтверждает сохранение качества на нашем зафиксированном наборе
+русских, английских, мультиязычных задач и поиска по коду. Она не превращает
+локальную проверку в официальный MTEB. В
+[полном отчёте](docs/benchmarks/0826-results.md) приведены сравнения векторов,
+рангов, отдельных групп и downstream-задач.
 
-Алиасы, явный Hub repository/revision и локальная директория используют один
-загрузчик:
+## Скорость и память понятными словами
+
+Измерения выполнены на MacBook Pro с Apple M4 Pro и 48 GB объединённой памяти.
+Для каждого замера скорости сделано 2 прогрева и 5 измеряемых повторов.
+
+| MLX-модель | Типичное время для одного текста на 512 токенов | Скорость пакета из 16 длинных текстов | Пиковая память для такого пакета |
+|---|---:|---:|---:|
+| 480M Q8 | 0,071 с | 6,38 документа/с | 1,339 GB |
+| 3B Q8 | 0,637 с | 0,73 документа/с | 5,137 GB |
+| 10B-A1.8B Q8 | 0,597 с | 0,76 документа/с | 14,423 GB |
+
+Под «длинным текстом» здесь понимается 1024 токена. Токены — части текста,
+которыми оперирует модель; они не всегда совпадают с целыми словами. Q8
+уменьшила место на диске и пиковую Metal-память примерно на 25–40%, но в тесте
+на 16 текстах оказалась на 12–19% медленнее BF16. Q8 стоит выбирать прежде всего
+для экономии памяти и места, а не ради гарантированного ускорения.
+
+[Полный отчёт](docs/benchmarks/0826-results.md) содержит median и p95, время
+загрузки, документов и токенов в секунду, память процесса, Metal-память,
+изменения качества, команды и хеши доказательств.
+
+## Исходные BF16-модели через MLX
+
+Тот же runtime умеет загружать точные исходные BF16-веса без их повторной
+публикации под `ai-babai`:
+
+| Алиас runtime | Исходная модель | Размер загрузки |
+|---|---|---:|
+| `480m-bf16` | [ai-sage/Giga-Embeddings-instruct-480M-0826](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-480M-0826) | 1,0 GB |
+| `3b-bf16` | [ai-sage/Giga-Embeddings-instruct-3B-0826](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-3B-0826) | 6,3 GB |
+| `10b-a1.8b-bf16` | [ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826](https://huggingface.co/ai-sage/Giga-Embeddings-instruct-10B-A1.8B-0826) | 21,0 GB |
+
+В MLX Collection остаются только три готовых Q8-артефакта. Исходные веса
+связаны с ними здесь и в model cards как источник и эталон качества.
+
+## Явные репозитории и локальные артефакты
+
+Алиас, явный Hugging Face repository/revision и локальная директория используют
+один загрузчик:
 
 ```python
 from pathlib import Path
@@ -103,19 +171,18 @@ from pathlib import Path
 from giga_embeddings_mlx import load_embedding_model
 
 model = load_embedding_model("480m-q8")
-
 model = load_embedding_model(
     "owner/repository",
     revision="immutable-commit-or-tag",
     cache_dir=Path("models-cache"),
 )
-
 model = load_embedding_model(Path("portable-model-directory"))
 ```
 
-## Кэш и offline-режим
+Встроенные алиасы разрешаются в точные проверенные коммиты. Читаемые теги
+обозначают релизы, а неизменяемые коммиты обеспечивают воспроизводимость.
 
-Если жизненным циклом файлов нужно управлять отдельно, выделите кэш проекта:
+## Кеш и работа без сети
 
 ```python
 model = load_embedding_model("3b-q8", cache_dir="models-cache")
@@ -126,22 +193,16 @@ model = load_embedding_model(
 )
 ```
 
-Эквиваленты в CLI: `--cache-dir models-cache` и `--offline`. Если закреплённого
-snapshot в кэше нет, ошибка offline-режима показывает repository и объясняет,
-как заполнить или выбрать кэш.
+Эквиваленты в CLI: `--cache-dir models-cache` и `--offline`. Удаляйте только
+кеш, который вы намеренно выделили этому проекту. Не удаляйте глобальный кеш
+Hugging Face ради одного snapshot.
 
-Удаляйте только директорию, которую вы намеренно выделили этому проекту, и
-сначала убедитесь, что её не используют другие приложения Hugging Face. Не
-удаляйте глобальный Hugging Face cache ради одного snapshot.
-
-До загрузки runtime консервативно сопоставляет размер весов с физической unified
-memory. Если preflight не проходит, выберите меньший профиль.
+Перед загрузкой runtime консервативно сравнивает размер весов с физической
+объединённой памятью. Если проверка не проходит, выберите модель меньше.
 `skip_memory_check=True` / `--skip-memory-check` — явный обход для пользователей,
-готовых принять риск swap или out-of-memory.
+готовых принять риск swap или нехватки памяти.
 
-## Локальный OpenAI-compatible endpoint
-
-Установите опциональные серверные зависимости:
+## Локальный OpenAI-совместимый endpoint
 
 ```bash
 python -m pip install 'giga-embeddings-mlx[server]'
@@ -162,67 +223,29 @@ curl http://127.0.0.1:8000/v1/embeddings \
 ```
 
 Сервер поддерживает выдачу `float` и `base64`. Усечение размерности не
-поддерживается: upstream-карточки `0826` не заявляют Matryoshka-обучение. Один
-процесс обслуживает одну модель и сериализует Metal inference.
+поддерживается: модели `0826` не заявляют Matryoshka-обучение. Один процесс
+обслуживает одну модель и последовательно выполняет Metal-инференс.
 
-## Результаты измерений
+## Совместимость и ограничения
 
-Измерения выполнены на MacBook Pro с Apple M4 Pro и 48 GB unified memory,
-Python 3.12.11, MLX 0.32.2 и MLX-LM 0.31.3. Для скорости использованы 2 warmup
-и 5 измеряемых повторов. Эти числа не предсказывают результат на других Mac и
-не сравниваются напрямую с upstream-результатами H100.
-
-Для выпускаемых вариантов Q8 уменьшил размер артефакта примерно на 40–47%, но
-на B16×1024 оказался на 12–19% медленнее соответствующего BF16. Рассматривайте
-weight quantization здесь прежде всего как компромисс по ёмкости и диску.
-
-Полный генерируемый отчёт отдельно показывает artifact size, process RSS,
-Metal peak, load time, median/p95 скорости, сохранение качества BF16 между
-backend, drift квантованных vectors, ranking и downstream delta:
-
-- [читаемые таблицы](docs/benchmarks/0826-results.md);
-- [machine-readable evidence и хэши источников](docs/benchmarks/0826-results.json).
-
-SHA-256 итогового acceptance JSON:
-`410b9cf7756e0718816b23a46f0d99e0f3e6574e4eb515cc5a99cff131057316`.
-Замороженный holdout на 512 текстах / 256 запросах / 2048 документах покрывает
-русский, английский, code и multilingual до 2048 токенов. Малые положительные
-delta означают отсутствие измеренной деградации в этом lane, а не улучшение
-модели от квантизации.
-
-## Как трактовать качество
-
-Исходные строгие numerical gates revision 1/2 выявили BF16 cross-backend и
-dynamic-shape drift и не прошли. Эти failures сохранены в истории. Revision 3
-прошла effectiveness-based gate для pooled vectors, padding, aggregate
-retrieval и каждой family с допуском `−0,005` по MRR/NDCG; rank agreement и
-hidden-state drift остались обязательной диагностикой.
-
-Это различие существенно: внутренние vectors разных backend могут расходиться,
-пока наблюдаемая retrieval-задача остаётся non-inferior. Поэтому публичный выбор
-Q8 учитывал representation, ranking, downstream quality, диск, память, загрузку
-и скорость, а не одно значение cosine.
-
-## Ограничения
-
-- Только Apple Silicon/macOS; на других платформах используйте upstream runtime.
-- Максимальная длина — 8192, но расход памяти растёт с batch и длиной; публичная
-  матрица скорости не является обещанием для любого workload.
+- Только Apple Silicon/macOS; на других платформах используйте исходный runtime.
+- Максимальная длина — 8192 токена, но расход памяти растёт с размером пакета и
+  длиной текста.
 - Q8 не гарантирует ускорение относительно BF16 на Metal.
-- Для 10B Q8 действует явное предупреждение по code retrieval выше.
-- Пакет не усекает размерность embedding молча.
-- `uint8`/binary-компрессия выходных vectors — отдельный выбор хранения индекса,
-  который не выполняется загрузчиком весов.
-- Локальный benchmark не является официальным upstream leaderboard result.
+- Предупреждение по поиску в коде для 10B существенно; для общих задач лучше 3B.
+- Пакет не усекает размерность эмбеддинга молча.
+- `uint8` или бинарное сжатие готовых векторов — отдельный выбор для хранения
+  индекса и не выполняется загрузчиком весов.
+- Локальная проверка качества не является официальным leaderboard result.
 
-## Разработка и цитирование
+## Разработка, лицензия и цитирование
 
-Conversion и evaluation остаются developer-facing и не входят в
-пользовательский CLI. См. [CONTRIBUTING.md](CONTRIBUTING.md) и
-[docs/EVALUATION.md](docs/EVALUATION.md). Порядок отправки security reports — в
-[SECURITY.md](SECURITY.md).
+Конвертация и evaluation остаются инструментами разработчика и не входят в
+пользовательский CLI. См. [CONTRIBUTING.md](CONTRIBUTING.md),
+[docs/EVALUATION.md](docs/EVALUATION.md) и [SECURITY.md](SECURITY.md).
 
-Этот независимый runtime распространяется по MIT. Лицензии upstream-моделей и
-уведомления сохраняются в соответствующих repositories; см.
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Метаданные для цитирования — в
-[CITATION.cff](CITATION.cff).
+Независимый MLX-runtime распространяется по MIT. Лицензии и уведомления
+исходных моделей остаются в соответствующих репозиториях; см.
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). При использовании укажите
+[оригинальную статью Giga-Embeddings](https://arxiv.org/abs/2608.23806) и этот
+проект через [CITATION.cff](CITATION.cff).
