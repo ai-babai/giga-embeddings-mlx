@@ -42,9 +42,7 @@ from giga_embeddings_mlx import load_embedding_model
 
 model = load_embedding_model("default")
 
-documents = model.encode_documents(
-    ["Москва — столица России.", "Париж — столица Франции."]
-)
+documents = model.encode_documents(["Москва — столица России.", "Париж — столица Франции."])
 queries = model.encode_queries(
     "Где находится Москва?",
     instruction="Given a question, retrieve passages that answer the question",

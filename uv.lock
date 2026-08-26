@@ -542,7 +542,7 @@ requires-dist = [
     { name = "mteb", marker = "extra == 'evaluation'", specifier = ">=2.20,<3" },
     { name = "numpy", specifier = ">=2.3,<3" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.4,<9" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.12,<1" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.16.4,<0.17" },
     { name = "safetensors", specifier = ">=0.7,<0.9" },
     { name = "scipy", marker = "extra == 'evaluation'", specifier = ">=1.17,<2" },
     { name = "sentence-transformers", marker = "extra == 'reference'", specifier = ">=6,<7" },
