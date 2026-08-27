@@ -14,7 +14,7 @@
 [Полный MLX-бенчмарк](docs/benchmarks/0826-results.md) ·
 [Последний релиз](https://github.com/ai-babai/giga-embeddings-mlx/releases/latest)
 
-![Какую модель Giga Embeddings 0826 MLX выбрать для Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+![Экономия размера загрузки и пиковой Metal-памяти с Q8 для Giga Embeddings 0826 на Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-q8-savings.png?v=2026-08-27)
 
 ## Зачем нужен этот MLX-порт?
 
@@ -23,8 +23,8 @@
 - Наши отдельные тесты проверяют перенос исходных BF16-весов на MLX и измеряют,
   что меняется после Q8-квантизации. У выпущенных 480M и 3B не обнаружено
   снижения совокупного качества поиска на замороженном тестовом наборе.
-- Рекомендуемая 3B-модель скачивается в размере 3,76 GB и использовала до
-  5,14 GB Metal-памяти в нашем тесте. Для BF16 это 6,31 GB и 7,69 GB.
+- Во всём выпущенном семействе Q8 уменьшает размер загрузки на **41–47%**, а
+  пиковую Metal-память — на **25–40%** относительно нативного MLX BF16.
 - В комплекте есть Python API, командная строка, offline-кеш и локальный
   OpenAI-совместимый endpoint `/v1/embeddings`.
 
@@ -66,7 +66,9 @@ Hugging Face, затем используется локальный кеш.
 
 ## Какую MLX-модель выбрать
 
-| MLX-модель | Для чего подходит | Русский MTEB исходной модели¹ | Наша проверка Q8² | Размер загрузки | Пиковая память³ |
+![Какую модель Giga Embeddings 0826 MLX выбрать для Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+
+| MLX-модель | Для чего подходит | Русский MTEB исходной модели¹ | Наша проверка Q8² | Размер Q8-загрузки | Пиковая Metal-память Q8³ |
 |---|---|---:|---:|---:|---:|
 | **[3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8)** | **рекомендуемая по умолчанию** | **74,56** | **NDCG@10 Δ +0,00181** | **3,755 GB** | **5,137 GB** |
 | [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8) | самая компактная и быстрая | 70,98 | NDCG@10 Δ +0,00289 | 0,525 GB | 1,339 GB |

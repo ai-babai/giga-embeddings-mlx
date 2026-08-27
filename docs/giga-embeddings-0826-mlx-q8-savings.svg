@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1150" viewBox="0 0 2400 1150" role="img" aria-labelledby="title desc">
+  <title id="title">What Q8 saves for Giga Embeddings 0826 on Apple Silicon</title>
+  <desc id="desc">Comparison of native MLX BF16 and released MLX Q8 model download sizes and peak Metal memory for the 480M, 3B, and 10B-A1.8B models, with local quality-check results.</desc>
+  <rect width="2400" height="1150" fill="#0d1117"/>
+  <style>
+    text {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      fill: #f0f6fc;
+      font-variant-numeric: tabular-nums;
+    }
+    .muted { fill: #a6b0bd; }
+    .blue { fill: #79c0ff; }
+    .green { fill: #7ee787; }
+    .amber { fill: #f2cc60; }
+    .summary-value { font-size: 58px; font-weight: 760; }
+    .summary-label { font-size: 29px; font-weight: 650; }
+    .column-label { font-size: 27px; font-weight: 720; letter-spacing: 0.2px; }
+    .model-title { font-size: 42px; font-weight: 760; }
+    .model-role { font-size: 26px; fill: #a6b0bd; }
+    .metric-kind { font-size: 23px; font-weight: 700; }
+    .metric-value { font-size: 34px; font-weight: 720; }
+    .saving { font-size: 24px; font-weight: 760; }
+    .quality-main { font-size: 27px; font-weight: 720; }
+    .quality-detail { font-size: 22px; fill: #a6b0bd; }
+  </style>
+
+  <text x="70" y="82" font-size="60" font-weight="760">What Q8 saves on Apple Silicon</text>
+  <text x="70" y="137" font-size="34" class="muted">Giga Embeddings 0826 · released MLX Q8 compared with native MLX BF16</text>
+
+  <g transform="translate(70 175)">
+    <rect width="720" height="150" rx="24" fill="#121a24" stroke="#303d4d" stroke-width="2"/>
+    <text x="34" y="72" class="summary-value blue">41–47%</text>
+    <text x="34" y="116" class="summary-label">smaller model downloads</text>
+  </g>
+  <g transform="translate(840 175)">
+    <rect width="720" height="150" rx="24" fill="#121a24" stroke="#303d4d" stroke-width="2"/>
+    <text x="34" y="72" class="summary-value green">25–40%</text>
+    <text x="34" y="116" class="summary-label">lower peak Metal memory</text>
+  </g>
+  <g transform="translate(1610 175)">
+    <rect width="720" height="150" rx="24" fill="#121a24" stroke="#303d4d" stroke-width="2"/>
+    <text x="34" y="72" class="summary-value">up to 9.8 GB</text>
+    <text x="34" y="116" class="summary-label">less to download for one model</text>
+  </g>
+
+  <g transform="translate(70 385)">
+    <rect width="2260" height="610" rx="24" fill="#121820" stroke="#30363d" stroke-width="2"/>
+    <rect width="2260" height="80" rx="24" fill="#161d27"/>
+    <rect y="56" width="2260" height="24" fill="#161d27"/>
+
+    <line x1="330" y1="0" x2="330" y2="610" stroke="#30363d" stroke-width="2"/>
+    <line x1="1040" y1="0" x2="1040" y2="610" stroke="#30363d" stroke-width="2"/>
+    <line x1="1750" y1="0" x2="1750" y2="610" stroke="#30363d" stroke-width="2"/>
+    <line x1="0" y1="80" x2="2260" y2="80" stroke="#30363d" stroke-width="2"/>
+    <line x1="0" y1="255" x2="2260" y2="255" stroke="#30363d" stroke-width="2"/>
+    <line x1="0" y1="430" x2="2260" y2="430" stroke="#30363d" stroke-width="2"/>
+
+    <text x="28" y="51" class="column-label">MODEL</text>
+    <text x="360" y="51" class="column-label">DOWNLOAD · BF16 → Q8</text>
+    <text x="1070" y="51" class="column-label">PEAK METAL MEMORY · BF16 → Q8</text>
+    <text x="1780" y="51" class="column-label">Q8 QUALITY CHECK</text>
+
+    <g transform="translate(0 80)">
+      <text x="28" y="70" class="model-title">480M</text>
+      <text x="28" y="111" class="model-role">smallest</text>
+
+      <text x="360" y="42" class="metric-kind muted">BF16</text>
+      <text x="360" y="82" class="metric-value muted">0.98 GB</text>
+      <text x="570" y="82" font-size="34" class="muted">→</text>
+      <text x="630" y="42" class="metric-kind blue">Q8</text>
+      <text x="630" y="82" class="metric-value">0.52 GB</text>
+      <rect x="879" y="34" width="124" height="45" rx="22" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+      <text x="941" y="64" class="saving green" text-anchor="middle">−46%</text>
+      <rect x="360" y="112" width="620" height="18" rx="9" fill="#3a424d"/>
+      <rect x="360" y="112" width="333" height="18" rx="9" fill="#58a6ff"/>
+
+      <text x="1070" y="42" class="metric-kind muted">BF16</text>
+      <text x="1070" y="82" class="metric-value muted">1.79 GB</text>
+      <text x="1280" y="82" font-size="34" class="muted">→</text>
+      <text x="1340" y="42" class="metric-kind green">Q8</text>
+      <text x="1340" y="82" class="metric-value">1.34 GB</text>
+      <rect x="1589" y="34" width="124" height="45" rx="22" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+      <text x="1651" y="64" class="saving green" text-anchor="middle">−25%</text>
+      <rect x="1070" y="112" width="620" height="18" rx="9" fill="#3a424d"/>
+      <rect x="1070" y="112" width="463" height="18" rx="9" fill="#3fb950"/>
+
+      <rect x="1780" y="34" width="440" height="100" rx="18" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+      <text x="1805" y="76" class="quality-main">Overall quality preserved</text>
+      <text x="1805" y="110" class="quality-detail">Q8 vs native MLX BF16</text>
+    </g>
+
+    <g transform="translate(0 255)">
+      <text x="28" y="70" class="model-title blue">3B</text>
+      <text x="28" y="111" class="model-role">recommended default</text>
+
+      <text x="360" y="42" class="metric-kind muted">BF16</text>
+      <text x="360" y="82" class="metric-value muted">6.31 GB</text>
+      <text x="570" y="82" font-size="34" class="muted">→</text>
+      <text x="630" y="42" class="metric-kind blue">Q8</text>
+      <text x="630" y="82" class="metric-value">3.76 GB</text>
+      <rect x="879" y="34" width="124" height="45" rx="22" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+      <text x="941" y="64" class="saving green" text-anchor="middle">−41%</text>
+      <rect x="360" y="112" width="620" height="18" rx="9" fill="#3a424d"/>
+      <rect x="360" y="112" width="369" height="18" rx="9" fill="#58a6ff"/>
+
+      <text x="1070" y="42" class="metric-kind muted">BF16</text>
+      <text x="1070" y="82" class="metric-value muted">7.69 GB</text>
+      <text x="1280" y="82" font-size="34" class="muted">→</text>
+      <text x="1340" y="42" class="metric-kind green">Q8</text>
+      <text x="1340" y="82" class="metric-value">5.14 GB</text>
+      <rect x="1589" y="34" width="124" height="45" rx="22" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+      <text x="1651" y="64" class="saving green" text-anchor="middle">−33%</text>
+      <rect x="1070" y="112" width="620" height="18" rx="9" fill="#3a424d"/>
+      <rect x="1070" y="112" width="414" height="18" rx="9" fill="#3fb950"/>
+
+      <rect x="1780" y="34" width="440" height="100" rx="18" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+      <text x="1805" y="76" class="quality-main">Overall quality preserved</text>
+      <text x="1805" y="110" class="quality-detail">recommended release</text>
+    </g>
+
+    <g transform="translate(0 430)">
+      <text x="28" y="70" class="model-title">10B-A1.8B</text>
+      <text x="28" y="111" class="model-role">research</text>
+
+      <text x="360" y="42" class="metric-kind muted">BF16</text>
+      <text x="360" y="82" class="metric-value muted">20.96 GB</text>
+      <text x="570" y="82" font-size="34" class="muted">→</text>
+      <text x="630" y="42" class="metric-kind blue">Q8</text>
+      <text x="630" y="82" class="metric-value">11.14 GB</text>
+      <rect x="879" y="34" width="124" height="45" rx="22" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+      <text x="941" y="64" class="saving green" text-anchor="middle">−47%</text>
+      <rect x="360" y="112" width="620" height="18" rx="9" fill="#3a424d"/>
+      <rect x="360" y="112" width="330" height="18" rx="9" fill="#58a6ff"/>
+
+      <text x="1070" y="42" class="metric-kind muted">BF16</text>
+      <text x="1070" y="82" class="metric-value muted">23.85 GB</text>
+      <text x="1280" y="82" font-size="34" class="muted">→</text>
+      <text x="1340" y="42" class="metric-kind green">Q8</text>
+      <text x="1340" y="82" class="metric-value">14.42 GB</text>
+      <rect x="1589" y="34" width="124" height="45" rx="22" fill="#123621" stroke="#2ea043" stroke-width="2"/>
+      <text x="1651" y="64" class="saving green" text-anchor="middle">−40%</text>
+      <rect x="1070" y="112" width="620" height="18" rx="9" fill="#3a424d"/>
+      <rect x="1070" y="112" width="375" height="18" rx="9" fill="#3fb950"/>
+
+      <rect x="1780" y="34" width="440" height="100" rx="18" fill="#3b2d12" stroke="#d29922" stroke-width="2"/>
+      <text x="1805" y="76" class="quality-main amber">Aggregate gate passed</text>
+      <text x="1805" y="110" class="quality-detail">code-search NDCG@10 −0.013</text>
+    </g>
+  </g>
+
+  <text x="70" y="1055" font-size="25" class="muted">Artifact size uses model files · peak Metal memory: 16 texts × 1024 tokens on M4 Pro, 48 GB</text>
+  <text x="70" y="1095" font-size="25" class="muted">Q8 reduced disk and memory, but was not faster than BF16 in these measured workloads · exact protocol in the benchmark report</text>
+</svg>

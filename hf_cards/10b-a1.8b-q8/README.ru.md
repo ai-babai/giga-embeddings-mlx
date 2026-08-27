@@ -33,7 +33,7 @@ inference: false
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Оригинальная статья](https://arxiv.org/abs/2608.23806)
 
-![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+![Экономия размера загрузки и пиковой Metal-памяти с Q8 для Giga Embeddings 0826](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-q8-savings.png?v=2026-08-27)
 
 > **Исследовательская модель с предупреждением по поиску в коде.** Совокупное
 > качество поиска прошло порог приёмки, но NDCG@10 для кода изменился на
@@ -52,8 +52,8 @@ inference: false
 - **Наша совокупная проверка Q8:** NDCG@10 изменилась на `−0,00046` относительно
   нативной MLX BF16.
 - **Поиск в коде:** NDCG@10 изменилась на `−0,01297`; top-1 agreement 92,19%.
-- **Размер загрузки:** 11,144 GB; **пиковая Metal-память:** 14,423 GB в тесте на
-  16 текстах.
+- **Экономия Q8:** загрузка 20,963 → 11,144 GB (**на 47% меньше**); пиковая
+  Metal-память 23,853 → 14,423 GB (**на 40% меньше**) относительно MLX BF16.
 
 Официальный MTEB относится к исходной BF16-модели. Мы не перезапускали полный
 MTEB на Q8: наша отдельная проверка измеряет сохранение поискового поведения при
@@ -61,7 +61,9 @@ MTEB на Q8: наша отдельная проверка измеряет со
 
 ## Какую выпущенную MLX-модель выбрать
 
-| Модель | Для чего подходит | Размер | Русский MTEB исходной модели | Наша проверка Q8 |
+![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+
+| Модель | Для чего подходит | Размер Q8-загрузки | Русский MTEB исходной модели | Наша проверка Q8 |
 |---|---|---:|---:|---:|
 | [3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8) | рекомендуемая по умолчанию | 3,755 GB | 74,56 | NDCG@10 Δ +0,00181 |
 | [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8) | самая компактная и быстрая | 0,525 GB | 70,98 | NDCG@10 Δ +0,00289 |

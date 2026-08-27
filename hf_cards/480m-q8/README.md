@@ -31,7 +31,7 @@ inference: false
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Original paper](https://arxiv.org/abs/2608.23806)
 
-![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+![Q8 download and peak Metal memory savings for Giga Embeddings 0826](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-q8-savings.png?v=2026-08-27)
 
 The compact choice for local Russian and English semantic search, RAG, text
 similarity, clustering, and classification on Apple Silicon. It is the smallest
@@ -44,6 +44,8 @@ of peak Metal memory in our 16-text test.
   [paper](https://arxiv.org/html/2608.23806#S4).
 - **Our Q8 preservation check:** aggregate NDCG@10 change `+0.00289` versus the
   native MLX BF16 model—no measured aggregate regression on the frozen set.
+- **Q8 savings:** download 0.978 → 0.525 GB (**46% smaller**); peak Metal
+  memory 1.792 → 1.339 GB (**25% lower**) versus native MLX BF16.
 - **Typical time for one 512-token text:** 0.071 s on an M4 Pro.
 - **Batch speed:** 6.38 documents/s for 16 texts of 1024 tokens each.
 
@@ -53,7 +55,9 @@ port and quantization preserve retrieval behavior.
 
 ## Choose a released MLX model
 
-| Model | Best for | Download | Original Russian MTEB | Our Q8 retrieval check |
+![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+
+| Model | Best for | Q8 download | Original Russian MTEB | Our Q8 retrieval check |
 |---|---|---:|---:|---:|
 | [3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8) | recommended default | 3.755 GB | 74.56 | NDCG@10 Δ +0.00181 |
 | **[480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8)** | **smallest and fastest** | **0.525 GB** | **70.98** | **NDCG@10 Δ +0.00289** |

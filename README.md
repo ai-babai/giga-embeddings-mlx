@@ -14,7 +14,7 @@ a cloud API, or Python code from model repositories during normal inference.
 [Full MLX benchmark](docs/benchmarks/0826-results.md) ·
 [Latest release](https://github.com/ai-babai/giga-embeddings-mlx/releases/latest)
 
-![Choose a Giga Embeddings 0826 MLX model for Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+![Q8 download and peak Metal memory savings for Giga Embeddings 0826 on Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-q8-savings.png?v=2026-08-27)
 
 ## Why this MLX port?
 
@@ -23,8 +23,8 @@ a cloud API, or Python code from model repositories during normal inference.
 - Our separate tests verify the native MLX BF16 port and measure what changes
   after Q8 quantization. The released 480M and 3B models showed no aggregate
   retrieval regression on the frozen evaluation set.
-- The recommended 3B model downloads as 3.76 GB and peaked at 5.14 GB of Metal
-  memory in our test, versus 6.31 GB and 7.69 GB for its BF16 baseline.
+- Across the released family, Q8 cuts model downloads by **41–47%** and peak
+  Metal memory by **25–40%** versus native MLX BF16.
 - A Python API, command-line tool, offline cache, and local OpenAI-compatible
   `/v1/embeddings` endpoint are included.
 
@@ -66,7 +66,9 @@ first use and then reuses the local cache.
 
 ## Choose an MLX model
 
-| MLX model | Best for | Original Russian MTEB¹ | Our Q8 retrieval check² | Download | Peak memory³ |
+![Choose a Giga Embeddings 0826 MLX model for Apple Silicon](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+
+| MLX model | Best for | Original Russian MTEB¹ | Our Q8 retrieval check² | Q8 download | Q8 peak Metal memory³ |
 |---|---|---:|---:|---:|---:|
 | **[3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8)** | **recommended default** | **74.56** | **NDCG@10 Δ +0.00181** | **3.755 GB** | **5.137 GB** |
 | [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8) | smallest and fastest | 70.98 | NDCG@10 Δ +0.00289 | 0.525 GB | 1.339 GB |

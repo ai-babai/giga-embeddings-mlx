@@ -31,7 +31,7 @@ inference: false
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Оригинальная статья](https://arxiv.org/abs/2608.23806)
 
-![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+![Экономия размера загрузки и пиковой Metal-памяти с Q8 для Giga Embeddings 0826](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-q8-savings.png?v=2026-08-27)
 
 Рекомендуемая модель по умолчанию для локального семантического поиска, RAG,
 сравнения текстов, кластеризации и классификации на русском и английском языках.
@@ -44,8 +44,8 @@ inference: false
   [статье авторов](https://arxiv.org/html/2608.23806#S4).
 - **Наша проверка Q8:** совокупная NDCG@10 изменилась на `+0,00181` относительно
   нативной MLX BF16 — ухудшение на замороженном наборе не обнаружено.
-- **Размер загрузки:** 3,755 GB; **пиковая Metal-память:** 5,137 GB в тесте на
-  16 текстах.
+- **Экономия Q8:** загрузка 6,312 → 3,755 GB (**на 41% меньше**); пиковая
+  Metal-память 7,694 → 5,137 GB (**на 33% меньше**) относительно MLX BF16.
 - **Типичное время одного текста на 512 токенов:** 0,637 с на M4 Pro.
 
 Официальный MTEB относится к исходной BF16-модели. Мы не перезапускали полный
@@ -54,7 +54,9 @@ MTEB на Q8: наша отдельная проверка измеряет со
 
 ## Какую выпущенную MLX-модель выбрать
 
-| Модель | Для чего подходит | Размер | Русский MTEB исходной модели | Наша проверка Q8 |
+![Какую модель Giga Embeddings 0826 MLX выбрать](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+
+| Модель | Для чего подходит | Размер Q8-загрузки | Русский MTEB исходной модели | Наша проверка Q8 |
 |---|---|---:|---:|---:|
 | **[3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8)** | **рекомендуемая по умолчанию** | **3,755 GB** | **74,56** | **NDCG@10 Δ +0,00181** |
 | [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8) | самая компактная и быстрая | 0,525 GB | 70,98 | NDCG@10 Δ +0,00289 |

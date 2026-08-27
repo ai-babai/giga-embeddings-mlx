@@ -33,7 +33,7 @@ inference: false
 [PyPI](https://pypi.org/project/giga-embeddings-mlx/) ·
 [Original paper](https://arxiv.org/abs/2608.23806)
 
-![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+![Q8 download and peak Metal memory savings for Giga Embeddings 0826](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-q8-savings.png?v=2026-08-27)
 
 > **Research model with a code-search warning.** Overall retrieval quality
 > passed our acceptance gate, but code-search NDCG@10 changed by `−0.01297`
@@ -51,7 +51,8 @@ normalization weights in BF16.
   Embeddings family—in the authors' [paper](https://arxiv.org/html/2608.23806#S4).
 - **Our aggregate Q8 check:** NDCG@10 change `−0.00046` versus native MLX BF16.
 - **Code-search check:** NDCG@10 change `−0.01297`; top-1 agreement 92.19%.
-- **Download:** 11.144 GB; **peak Metal memory:** 14.423 GB in the 16-text test.
+- **Q8 savings:** download 20.963 → 11.144 GB (**47% smaller**); peak Metal
+  memory 23.853 → 14.423 GB (**40% lower**) versus native MLX BF16.
 
 The official MTEB result belongs to the original BF16 model. We did not rerun
 the complete MTEB suite on Q8; our local test separately checks whether the MLX
@@ -59,7 +60,9 @@ port and quantization preserve retrieval behavior.
 
 ## Choose a released MLX model
 
-| Model | Best for | Download | Original Russian MTEB | Our Q8 retrieval check |
+![Choose a Giga Embeddings 0826 MLX model](https://raw.githubusercontent.com/ai-babai/giga-embeddings-mlx/main/docs/giga-embeddings-0826-mlx-choice.png?v=2026-08-26-2)
+
+| Model | Best for | Q8 download | Original Russian MTEB | Our Q8 retrieval check |
 |---|---|---:|---:|---:|
 | [3B MLX Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-3b-mlx-q8) | recommended default | 3.755 GB | 74.56 | NDCG@10 Δ +0.00181 |
 | [480M Q8](https://huggingface.co/ai-babai/giga-embeddings-0826-480m-mlx-q8) | smallest and fastest | 0.525 GB | 70.98 | NDCG@10 Δ +0.00289 |
