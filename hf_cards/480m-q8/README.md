@@ -3,11 +3,12 @@ license: mit
 language:
   - ru
   - en
-pipeline_tag: feature-extraction
+pipeline_tag: sentence-similarity
 library_name: giga-embeddings-mlx
 base_model: ai-sage/Giga-Embeddings-instruct-480M-0826
 base_model_relation: quantized
 tags:
+  - feature-extraction
   - mlx
   - apple-silicon
   - embeddings
